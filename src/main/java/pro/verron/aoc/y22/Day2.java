@@ -1,4 +1,4 @@
-package pro.verron;
+package pro.verron.aoc.y22;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,12 +7,12 @@ import java.util.Map;
 
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
-import static pro.verron.Day2.Play.*;
-import static pro.verron.Day2.State.*;
+import static pro.verron.aoc.y22.Day2.Play.*;
+import static pro.verron.aoc.y22.Day2.State.*;
 
 public class Day2 {
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("day2-input.txt");
+        Path source = Path.of("input","y22", "day2-input.txt");
         String content = Files.readString(source);
         out.println(strategy1(content));
         out.println(strategy2(content));
@@ -40,7 +40,7 @@ public class Day2 {
 
     private static State parseIntent(final String token, final String loss, final String draw, final String win) {
         if (token.equals(loss)) return LOSS;
-        else if (token.equals(draw)) return State.DRAW;
+        else if (token.equals(draw)) return DRAW;
         else if (token.equals(win)) return WIN;
         throw new IllegalStateException("Unexpected value: " + token);
     }

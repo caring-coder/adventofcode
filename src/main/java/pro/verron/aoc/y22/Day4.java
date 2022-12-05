@@ -1,4 +1,4 @@
-package pro.verron;
+package pro.verron.aoc.y22;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +15,7 @@ import static java.util.stream.IntStream.range;
 public class Day4 {
 
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("day4-input.txt");
+        Path source = Path.of("input","y22", "day4-input.txt");
         out.println(day4(Files.lines(source)));
         out.println(day4bis(Files.lines(source)));
     }

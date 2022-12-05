@@ -1,4 +1,4 @@
-package pro.verron;
+package pro.verron.aoc.y22;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ import static java.util.Comparator.reverseOrder;
 
 public class Day1 {
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("day1-input.txt");
+        Path source = Path.of("input","y22", "day1-input.txt");
         String content = Files.readString(source);
         out.println(totalCaloriesForNBiggestElfCarriers(content, 1));
         out.println(totalCaloriesForNBiggestElfCarriers(content, 3));
