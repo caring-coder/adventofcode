@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
@@ -14,38 +15,38 @@ public class Day2 {
     public static void main(String[] args) throws IOException {
         Path source = Path.of("input","y22", "day2-input.txt");
         String content = Files.readString(source);
-        out.println(strategy1(content));
-        out.println(strategy2(content));
+        out.println(ex1(content).map(String::valueOf).orElse("No strategy"));
+        out.println(ex(content).map(String::valueOf).orElse("No strategy"));
     }
 
-    private static String strategy1(String content) {
+    private static Optional<Integer> ex1(String content) {
         return stream(content.split("\n"))
                 .map(line -> line.split(" "))
-                .map(line -> new Game(parsePlay(line[0], "A", "B", "C"), parsePlay(line[1], "X", "Y", "Z")))
-                .map(Game::value)
-                .reduce(Integer::sum)
-                .map(String::valueOf)
-                .orElse("No strategy");
+                .map(line -> new Game(
+                        parsePlay(line[0], "A", "B", "C"),
+                        parsePlay(line[1], "X", "Y", "Z"))
+                ).map(Game::value)
+                .reduce(Integer::sum);
     }
 
-    private static String strategy2(String content) {
+    private static Optional<Integer> ex(String content) {
         return stream(content.split("\n"))
                 .map(line -> line.split(" "))
-                .map(line -> new Game(parsePlay(line[0], "A", "B", "C"), parseIntent(line[1], "X", "Y", "Z")))
-                .map(Game::value)
-                .reduce(Integer::sum)
-                .map(String::valueOf)
-                .orElse("No strategy");
+                .map(line -> new Game(
+                        parsePlay(line[0], "A", "B", "C"),
+                        parseIntent(line[1], "X", "Y", "Z"))
+                ).map(Game::value)
+                .reduce(Integer::sum);
     }
 
-    private static State parseIntent(final String token, final String loss, final String draw, final String win) {
+    private static State parseIntent(String token, String loss, String draw, String win) {
         if (token.equals(loss)) return LOSS;
         else if (token.equals(draw)) return DRAW;
         else if (token.equals(win)) return WIN;
         throw new IllegalStateException("Unexpected value: " + token);
     }
 
-    private static Play parsePlay(final String token, String rock, String paper, String scissor) {
+    private static Play parsePlay(String token, String rock, String paper, String scissor) {
         if (token.equals(rock)) return ROCK;
         else if (token.equals(paper)) return PAPER;
         else if (token.equals(scissor)) return SCISSOR;
@@ -57,7 +58,6 @@ public class Day2 {
     public enum State {WIN, LOSS, DRAW}
 
     public record Game(Play elfPlay, Play myPlay, State state) {
-
         public static final Map<Play, Map<Play, State>> STATE_COMPUTER = Map.of(
                 ROCK, Map.of(ROCK, DRAW, PAPER, WIN, SCISSOR, LOSS),
                 PAPER, Map.of(ROCK, LOSS, PAPER, DRAW, SCISSOR, WIN),

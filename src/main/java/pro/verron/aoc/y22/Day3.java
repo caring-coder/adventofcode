@@ -16,24 +16,24 @@ public class Day3 {
 
     public static void main(String[] args) throws IOException {
         Path source = Path.of("input","y22", "day3-input.txt");
-        out.println(day3(Files.lines(source)));
-        out.println(day3bis(Files.lines(source)));
+        out.println(ex1(Files.lines(source)));
+        out.println(ex2(Files.lines(source)));
     }
 
-    private static String day3(Stream<String> content) {
+    private static String ex1(Stream<String> content) {
         return content
                 .map(Day3::str2list)
                 .map(bag -> Stream
                         .of(bag.subList(0, bag.size() / 2), bag.subList(bag.size() / 2, bag.size()))
                         .reduce(items, Day3::intersect))
-                .map(list -> list.get(0))
+                .map(list -> list.stream().findAny().orElseThrow())
                 .map(Day3::getPriority)
                 .reduce(Integer::sum)
                 .map(String::valueOf)
                 .orElse("No elfs found");
     }
 
-    private static String day3bis(Stream<String> content) {
+    private static String ex2(Stream<String> content) {
         AtomicInteger i = new AtomicInteger();
         return content
                 .map(Day3::str2list)
@@ -41,7 +41,7 @@ public class Day3 {
                 .values()
                 .stream()
                 .map(strings -> strings.stream().reduce(items, Day3::intersect))
-                .map(l -> l.get(0))
+                .map(l -> l.stream().findAny().orElseThrow())
                 .map(Day3::getPriority)
                 .reduce(Integer::sum)
                 .map(String::valueOf)

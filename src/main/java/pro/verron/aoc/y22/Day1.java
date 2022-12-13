@@ -14,11 +14,11 @@ public class Day1 {
     public static void main(String[] args) throws IOException {
         Path source = Path.of("input","y22", "day1-input.txt");
         String content = Files.readString(source);
-        out.println(totalCaloriesForNBiggestElfCarriers(content, 1));
-        out.println(totalCaloriesForNBiggestElfCarriers(content, 3));
+        out.println(ex1(content, 1));
+        out.println(ex1(content, 3));
     }
 
-    private static String totalCaloriesForNBiggestElfCarriers(String content, int nbElfs) {
+    private static String ex1(String content, int nbElfs) {
         return stream(content.split("\n\n"))           // Split by bags
                 .map(bag -> bag.split("\n"))           // Split bags items
                 .map(Arrays::stream)                         // Make bags item streamable

@@ -13,38 +13,31 @@ import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 
 public class Day4 {
-
     public static void main(String[] args) throws IOException {
         Path source = Path.of("input","y22", "day4-input.txt");
-        out.println(day4(Files.lines(source)));
-        out.println(day4bis(Files.lines(source)));
+        out.println(ex1(Files.lines(source)));
+        out.println(ex2(Files.lines(source)));
     }
-
-    private static String day4(Stream<String> content) {
-        return String.valueOf(content
-                .map(pair -> pair.split(","))
-                .map(Arrays::stream)
+    private static long ex1(Stream<String> content) {
+        return content
+                .map(pair -> pair.split(",")).map(Arrays::stream)
                 .map(pair -> pair.map(Day4::toRange))
                 .map(Stream::toList)
                 .filter(l -> l.get(0).containsAll(l.get(1)) || l.get(1).containsAll(l.get(0)))
-                .count());
+                .count();
     }
-
-    private static String day4bis(Stream<String> content) {
-        long count = content
+    private static long ex2(Stream<String> content) {
+        return content
                 .map(pair -> pair.split(","))
                 .map(Arrays::stream)
                 .map(pair -> pair.map(Day4::toRange))
                 .map(pair -> pair.reduce(Day4::intersect).orElseThrow())
                 .filter(l -> !l.isEmpty())
                 .count();
-        return String.valueOf(count);
     }
-
     private static <T> Set<T> intersect(Set<T> accumulator, Set<T> current) {
         return accumulator.stream().filter(current::contains).collect(toSet());
     }
-
     private static Set<Integer> toRange(String str) {
         String[] split = str.split("-");
         int start = parseInt(split[0]);
