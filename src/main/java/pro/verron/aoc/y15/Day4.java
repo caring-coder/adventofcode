@@ -16,7 +16,7 @@ public class Day4 {
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         MD = MessageDigest.getInstance("MD5");
-        Path source = Path.of("input","y15", "day4-input.txt");
+        Path source = Path.of("input","y15", "day04-input.txt");
         out.println(ex1(Files.readString(source), "00000"));
         out.println(ex1(Files.readString(source), "000000"));
     }

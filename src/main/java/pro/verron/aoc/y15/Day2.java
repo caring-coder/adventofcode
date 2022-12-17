@@ -11,7 +11,7 @@ import static java.util.Arrays.stream;
 
 public class Day2 {
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("input","y15", "day2-input.txt");
+        Path source = Path.of("input","y15", "day02-input.txt");
         out.println(ex1(Files.lines(source)));
         out.println(ex2(Files.lines(source)));
     }

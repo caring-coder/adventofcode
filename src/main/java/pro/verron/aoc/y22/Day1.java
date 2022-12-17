@@ -12,7 +12,7 @@ import static java.util.Comparator.reverseOrder;
 
 public class Day1 {
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("input","y22", "day1-input.txt");
+        Path source = Path.of("input","y22", "day01-input.txt");
         String content = Files.readString(source);
         out.println(ex1(content, 1));
         out.println(ex1(content, 3));

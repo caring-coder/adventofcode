@@ -14,7 +14,7 @@ import static java.util.stream.IntStream.range;
 
 public class Day4 {
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("input","y22", "day4-input.txt");
+        Path source = Path.of("input","y22", "day04-input.txt");
         out.println(ex1(Files.lines(source)));
         out.println(ex2(Files.lines(source)));
     }

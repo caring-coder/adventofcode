@@ -13,7 +13,7 @@ import static pro.verron.aoc.y22.Day2.State.*;
 
 public class Day2 {
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("input","y22", "day2-input.txt");
+        Path source = Path.of("input","y22", "day02-input.txt");
         String content = Files.readString(source);
         out.println(ex1(content).map(String::valueOf).orElse("No strategy"));
         out.println(ex(content).map(String::valueOf).orElse("No strategy"));
