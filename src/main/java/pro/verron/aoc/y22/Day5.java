@@ -17,7 +17,7 @@ public class Day5 {
         out.println(ex1(Files.readString(source), (l, m) -> m.apply9000(l)));
         out.println(ex1(Files.readString(source), (l, m) -> m.apply9001(l)));
     }
-    private static Object ex1(String crates, final BiConsumer<List<Deque<Character>>, Move> moveConsumer) {
+    private static Object ex1(String crates, BiConsumer<List<Deque<Character>>, Move> moveConsumer) {
         String[] split = crates.split("\n\n");
         String table = split[0];
         String[] rows = table.split("\n");
