@@ -1,11 +1,10 @@
 package pro.verron.aoc.y22;
 
+import pro.verron.aoc.AdventOfCode;
 import pro.verron.aoc.Coordinate;
 import pro.verron.aoc.Direction;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import static java.lang.Math.max;
@@ -20,9 +19,11 @@ import static pro.verron.aoc.Direction.UP;
 
 public class Day17 {
     public static void main(String[] args) throws IOException {
-        assertEquals(simulateRockFalls(parseDirections("day17-sample.txt"), 2022L), 3068, "Sample");
-        assertEquals(simulateRockFalls(parseDirections("day17-input.txt"), 2022L), 3114, "Part 1");
-        assertEquals(simulateRockFalls(parseDirections("day17-input.txt"), 1000000000000L), 1540804597682L, "Part 2");
+        AdventOfCode adventOfCode = new AdventOfCode(22, 17);
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.sampleString()), 2022L), 3068, "Sample Part 1");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.inputString()), 2022L), 3114, "Exercice Part 1");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.sampleString()), 1000000000000L), 1514285714288L, "Sample Part 2");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.inputString()), 1000000000000L), 1540804597682L, "Exercice Part 2");
     }
     static final List<Shape> SHAPES = List.of(
             new Shape(List.of("####"), 1, 4, new Coordinate(3, 2)),
@@ -30,8 +31,7 @@ public class Day17 {
             new Shape(List.of("###", "  #", "  #"), 3, 3, new Coordinate(3, 2)),
             new Shape(List.of("#", "#", "#", "#"), 4, 1, new Coordinate(3, 2)),
             new Shape(List.of("##", "##"), 2, 2, new Coordinate(3, 2)));
-    static LinkedList<Direction> parseDirections(String s) throws IOException {
-        var input = Files.readString(Path.of("input", "y22", s));
+    static LinkedList<Direction> parseDirections(String input) {
         return stream(input.split(""))
                 .map(character -> character.equals("<") ? Direction.LEFT : Direction.RIGHT)
                 .collect(toCollection(LinkedList::new));
@@ -64,7 +64,6 @@ public class Day17 {
                         .computeIfAbsent(cave.last(20), subCave -> new TreeMap<>());
                 heights.put(stackHeight, nbShapesFallen);
                 if(heights.size() >= 3) {
-                    System.out.println("Made a loop");
                     long ultimate = heights.lastKey();
                     long penultimate = heights.headMap(ultimate).lastKey();
                     long antepenultimate = heights.headMap(penultimate).lastKey();
@@ -72,7 +71,6 @@ public class Day17 {
                     long deltaHeight = ultimate - penultimate;
                     long penultimateDelta = penultimate - antepenultimate;
                     if(deltaHeight == penultimateDelta) {
-                        System.out.println("Made a stable loop");
                         long deltaFallen = heights.get(ultimate) - heights.get(penultimate);
                         long times = (requestedFallen - nbShapesFallen) / deltaFallen;
                         skipped += deltaHeight * times;
@@ -80,7 +78,6 @@ public class Day17 {
                     }
                 }
                 nbShapesFallen++;
-                System.out.println(nbShapesFallen);
             }
         } while (nbShapesFallen < requestedFallen);
         return cave.stackHeight() + skipped;
