@@ -19,17 +19,17 @@ import static pro.verron.aoc.Direction.DOWN;
 import static pro.verron.aoc.Direction.UP;
 
 public class Day17 {
+    public static void main(String[] args) throws IOException {
+        assertEquals(simulateRockFalls(parseDirections("day17-sample.txt"), 2022L), 3068, "Sample");
+        assertEquals(simulateRockFalls(parseDirections("day17-input.txt"), 2022L), 3114, "Part 1");
+        assertEquals(simulateRockFalls(parseDirections("day17-input.txt"), 1000000000000L), 1540804597682L, "Part 2");
+    }
     static final List<Shape> SHAPES = List.of(
             new Shape(List.of("####"), 1, 4, new Coordinate(3, 2)),
             new Shape(List.of(" # ", "###", " # "), 3, 3, new Coordinate(3, 2)),
             new Shape(List.of("###", "  #", "  #"), 3, 3, new Coordinate(3, 2)),
             new Shape(List.of("#", "#", "#", "#"), 4, 1, new Coordinate(3, 2)),
             new Shape(List.of("##", "##"), 2, 2, new Coordinate(3, 2)));
-    public static void main(String[] args) throws IOException {
-        assertEquals(Day17.simulateRockFalls(parseDirections("day17-sample.txt"), 2022L), 3068, "Sample");
-        assertEquals(Day17.simulateRockFalls(parseDirections("day17-input.txt"), 2022L), 3114, "Part 1");
-        assertEquals(Day17.simulateRockFalls(parseDirections("day17-input.txt"), 1000000000000L), 3068, "Part 2");
-    }
     static LinkedList<Direction> parseDirections(String s) throws IOException {
         var input = Files.readString(Path.of("input", "y22", s));
         return stream(input.split(""))
@@ -37,12 +37,13 @@ public class Day17 {
                 .collect(toCollection(LinkedList::new));
     }
     static long simulateRockFalls(Queue<Direction> jetDirections, long requestedFallen) {
-        var cave = new Cave(7, emptyList(), new Coordinate(0, 0));
+        var cave = new Cave(7, emptyList());
         var directions = new LinkedList<>(jetDirections);
         var shapes = new LinkedList<>(SHAPES);
         Map<Integer, Map<Integer, Map<Cave, SortedMap<Long, Long>>>> steps = new HashMap<>();
         Shape shape = shapes.remove();
         long nbShapesFallen = 0;
+        long skipped = 0;
         do {
             if (directions.isEmpty()) directions.addAll(jetDirections);
             Direction direction = directions.remove();
@@ -74,7 +75,7 @@ public class Day17 {
                         System.out.println("Made a stable loop");
                         long deltaFallen = heights.get(ultimate) - heights.get(penultimate);
                         long times = (requestedFallen - nbShapesFallen) / deltaFallen;
-                        cave = cave.skip(deltaHeight * times);
+                        skipped += deltaHeight * times;
                         nbShapesFallen += deltaFallen * times;
                     }
                 }
@@ -82,7 +83,7 @@ public class Day17 {
                 System.out.println(nbShapesFallen);
             }
         } while (nbShapesFallen < requestedFallen);
-        return cave.stackHeight();
+        return cave.stackHeight() + skipped;
     }
     record Shape(List<String> s, int height, int width, Coordinate coordinate) {
         public long bottom() {
@@ -120,7 +121,7 @@ public class Day17 {
         }
     }
 
-    record Cave(int width, List<String> rows, Coordinate coordinate) {
+    record Cave(int width, List<String> rows) {
         public Cave insert(Shape shape) {
             int index = max(0, rows.size() - 20);
             LinkedList<String> futureRows = new LinkedList<>(rows.subList(0, index));
@@ -134,7 +135,7 @@ public class Day17 {
                 }
                 futureRows.add(sb.toString());
             }
-            return new Cave(width, futureRows, coordinate);
+            return new Cave(width, futureRows);
         }
 
         public boolean collides(Shape shape) {
@@ -145,25 +146,18 @@ public class Day17 {
         public long stackHeight() {
             int endIndex = rows.size();
             int fromIndex = max(0, endIndex - 5);
-            return rows.subList(fromIndex, endIndex).stream().filter(s -> s.contains("#")).count() + coordinate.row() + fromIndex;
+            return rows.subList(fromIndex, endIndex).stream().filter(s -> s.contains("#")).count() + fromIndex;
         }
         public boolean exists(Coordinate target) {
-            if (target.row() < coordinate.row()) return true;
-            if (target.row() >= coordinate.row() + stackHeight()) return false;
-            if (target.column() < coordinate.column()) return true;
-            if (target.column() >= coordinate.column() + width) return true;
-            return existsInShapeCoordinate(target.row() - coordinate.row(), target.column() - coordinate.column());
-        }
-        private boolean existsInShapeCoordinate(long i, long j) {
-            return rows.get((int)(i)).charAt((int)j) == '#';
-        }
-
-        public Cave skip(long height) {
-            return new Cave(width, rows, new Coordinate(coordinate.row() + height, coordinate.column()));
+            if (target.row() < 0) return true;
+            if (target.row() >= stackHeight()) return false;
+            if (target.column() < 0) return true;
+            if (target.column() >= width) return true;
+            return rows.get((int)(target.row())).charAt((int) target.column()) == '#';
         }
 
         public Cave last(int nbLines) {
-            return new Cave(width, List.copyOf(rows.subList(max(0, rows.size() - nbLines), rows.size())), coordinate);
+            return new Cave(width, List.copyOf(rows.subList(max(0, rows.size() - nbLines), rows.size())));
         }
     }
 }
