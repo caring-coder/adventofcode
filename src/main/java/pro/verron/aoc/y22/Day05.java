@@ -9,7 +9,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.System.out;
 import static java.util.stream.Collectors.joining;
 
-public class Day5 {
+public class Day05 {
     interface CrateMover {
         void apply(Move move, List<Deque<Character>> crateStacks);
     }

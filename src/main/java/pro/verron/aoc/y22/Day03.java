@@ -11,7 +11,7 @@ import static java.lang.System.out;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.groupingBy;
 
-public class Day3 {
+public class Day03 {
     private static final List<String> items = str2list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
     public static void main(String[] args) throws IOException {
@@ -22,12 +22,12 @@ public class Day3 {
 
     private static String ex1(Stream<String> content) {
         return content
-                .map(Day3::str2list)
+                .map(Day03::str2list)
                 .map(bag -> Stream
                         .of(bag.subList(0, bag.size() / 2), bag.subList(bag.size() / 2, bag.size()))
-                        .reduce(items, Day3::intersect))
+                        .reduce(items, Day03::intersect))
                 .map(list -> list.stream().findAny().orElseThrow())
-                .map(Day3::getPriority)
+                .map(Day03::getPriority)
                 .reduce(Integer::sum)
                 .map(String::valueOf)
                 .orElse("No elfs found");
@@ -36,13 +36,13 @@ public class Day3 {
     private static String ex2(Stream<String> content) {
         AtomicInteger i = new AtomicInteger();
         return content
-                .map(Day3::str2list)
+                .map(Day03::str2list)
                 .collect(groupingBy(line -> i.getAndIncrement() / 3))
                 .values()
                 .stream()
-                .map(strings -> strings.stream().reduce(items, Day3::intersect))
+                .map(strings -> strings.stream().reduce(items, Day03::intersect))
                 .map(l -> l.stream().findAny().orElseThrow())
-                .map(Day3::getPriority)
+                .map(Day03::getPriority)
                 .reduce(Integer::sum)
                 .map(String::valueOf)
                 .orElse("No elfs found");

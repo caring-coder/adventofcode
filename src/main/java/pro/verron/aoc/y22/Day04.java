@@ -12,7 +12,7 @@ import static java.lang.System.out;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 
-public class Day4 {
+public class Day04 {
     public static void main(String[] args) throws IOException {
         Path source = Path.of("input","y22", "day04-input.txt");
         out.println(ex1(Files.lines(source)));
@@ -21,7 +21,7 @@ public class Day4 {
     private static long ex1(Stream<String> content) {
         return content
                 .map(pair -> pair.split(",")).map(Arrays::stream)
-                .map(pair -> pair.map(Day4::toRange))
+                .map(pair -> pair.map(Day04::toRange))
                 .map(Stream::toList)
                 .filter(l -> l.get(0).containsAll(l.get(1)) || l.get(1).containsAll(l.get(0)))
                 .count();
@@ -30,8 +30,8 @@ public class Day4 {
         return content
                 .map(pair -> pair.split(","))
                 .map(Arrays::stream)
-                .map(pair -> pair.map(Day4::toRange))
-                .map(pair -> pair.reduce(Day4::intersect).orElseThrow())
+                .map(pair -> pair.map(Day04::toRange))
+                .map(pair -> pair.reduce(Day04::intersect).orElseThrow())
                 .filter(l -> !l.isEmpty())
                 .count();
     }
