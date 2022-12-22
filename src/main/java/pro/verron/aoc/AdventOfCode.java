@@ -1,7 +1,9 @@
 package pro.verron.aoc;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Path.of;
@@ -25,5 +27,17 @@ public record AdventOfCode(int year, int day) {
 
     public String sampleString() throws IOException {
         return inputString(SAMPLE);
+    }
+
+    public Stream<String> sampleStream() throws IOException {
+        return inputStream(SAMPLE);
+    }
+
+    private Stream<String> inputStream(String input) throws IOException {
+        return Files.lines(inputPath(input));
+    }
+
+    public Stream<String> inputStream() throws IOException {
+        return inputStream(INPUT);
     }
 }
