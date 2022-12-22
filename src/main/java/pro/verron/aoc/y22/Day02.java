@@ -14,10 +14,10 @@ import static pro.verron.aoc.y22.Day02.State.*;
 public class Day02 {
     public static void main(String[] args) throws IOException {
         AdventOfCode adventOfCode = new AdventOfCode(22, 2);
-        assertEquals(rockPaperScissors(adventOfCode.sampleStream(), Day02::XYZareMoves), 15, "Sample Part 1");
-        assertEquals(rockPaperScissors(adventOfCode.inputStream(), Day02::XYZareMoves), 10404, "Exercice Part 1");
-        assertEquals(rockPaperScissors(adventOfCode.sampleStream(), Day02::XYZareIntents), 12, "Sample Part 2");
-        assertEquals(rockPaperScissors(adventOfCode.inputStream(), Day02::XYZareIntents), 10334, "Exercice Part 1");
+        assertEquals(rockPaperScissors(adventOfCode.testStream(), Day02::XYZareMoves), 15, "Sample Part 1");
+        assertEquals(rockPaperScissors(adventOfCode.trueStream(), Day02::XYZareMoves), 10404, "Exercice Part 1");
+        assertEquals(rockPaperScissors(adventOfCode.testStream(), Day02::XYZareIntents), 12, "Sample Part 2");
+        assertEquals(rockPaperScissors(adventOfCode.trueStream(), Day02::XYZareIntents), 10334, "Exercice Part 1");
     }
 
     @FunctionalInterface

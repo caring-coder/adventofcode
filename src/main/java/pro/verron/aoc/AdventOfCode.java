@@ -24,14 +24,14 @@ public record AdventOfCode(int year, int day) {
     public String sampleString() throws IOException {
         return inputString(SAMPLE);
     }
-    public Stream<String> sampleStream() throws IOException {
-        return inputStream(SAMPLE);
+    public Stream<String> testStream() throws IOException {
+        return trueStream(SAMPLE);
     }
-    private Stream<String> inputStream(String input) throws IOException {
+    private Stream<String> trueStream(String input) throws IOException {
         return Files.lines(inputPath(input));
     }
-    public Stream<String> inputStream() throws IOException {
-        return inputStream(INPUT);
+    public Stream<String> trueStream() throws IOException {
+        return trueStream(INPUT);
     }
 
     public List<String> testList() throws IOException {
