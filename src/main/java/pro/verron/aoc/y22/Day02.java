@@ -17,26 +17,34 @@ public class Day02 {
         assertEquals(rockPaperScissors(adventOfCode.sampleStream(), Day02::XYZareMoves), 15, "Sample Part 1");
         assertEquals(rockPaperScissors(adventOfCode.inputStream(), Day02::XYZareMoves), 10404, "Exercice Part 1");
         assertEquals(rockPaperScissors(adventOfCode.sampleStream(), Day02::XYZareIntents), 12, "Sample Part 2");
-        assertEquals(rockPaperScissors(adventOfCode.inputStream(), Day02::XYZareIntents), 10334, "Exercice Part 2");
+        assertEquals(rockPaperScissors(adventOfCode.inputStream(), Day02::XYZareIntents), 10334, "Exercice Part 1");
     }
+
     @FunctionalInterface
-    interface GameParser{
+    interface GameParser {
         Game parse(String elfToken, String yourToken);
-        default Game parse(String line){ return parse(line.split(" "));}
-        default Game parse(String[] tokens){ return parse(tokens[0], tokens[1]);}
+
+        default Game parse(String line) {
+            return parse(line.split(" "));
+        }
+
+        default Game parse(String[] tokens) {
+            return parse(tokens[0], tokens[1]);
+        }
     }
+
     private static Game XYZareMoves(String elfToken, String yourToken) {
-        return new Game(
-                parsePlay("A", "B", "C").apply(elfToken),
-                parsePlay("X", "Y", "Z").apply(yourToken)
-        );
+        Function<String, Play> elfMoveParser = parsePlay("A", "B", "C");
+        Function<String, Play> yourMoveParser = parsePlay("X", "Y", "Z");
+        return new Game(elfMoveParser.apply(elfToken), yourMoveParser.apply(yourToken));
     }
+
     private static Game XYZareIntents(String elfToken, String yourToken) {
-        return new Game(
-                parsePlay("A", "B", "C").apply(elfToken),
-                parseIntent("X", "Y", "Z").apply(yourToken)
-        );
+        Function<String, Play> elfMoveParser = parsePlay("A", "B", "C");
+        Function<String, State> intentParser = parseIntent("X", "Y", "Z");
+        return new Game(elfMoveParser.apply(elfToken), intentParser.apply(yourToken));
     }
+
     private static Function<String, Play> parsePlay(String rock, String paper, String scissor) {
         return token -> {
             if (token.equals(rock)) return ROCK;
@@ -45,6 +53,7 @@ public class Day02 {
             throw new IllegalStateException("Unexpected value: " + token);
         };
     }
+
     private static Function<String, State> parseIntent(String loss, String draw, String win) {
         return token -> {
             if (token.equals(loss)) return LOSS;
@@ -53,11 +62,15 @@ public class Day02 {
             throw new IllegalStateException("Unexpected value: " + token);
         };
     }
+
     private static int rockPaperScissors(Stream<String> content, GameParser gameParser) {
         return content.map(gameParser::parse).mapToInt(Game::value).sum();
     }
+
     public enum Play {ROCK, PAPER, SCISSOR}
+
     public enum State {WIN, LOSS, DRAW}
+
     public record Game(Play elfPlay, Play myPlay, State state) {
         public static final Map<Play, Map<Play, State>> STATE_COMPUTER = Map.of(
                 ROCK, Map.of(ROCK, DRAW, PAPER, WIN, SCISSOR, LOSS),
@@ -67,12 +80,15 @@ public class Day02 {
                 ROCK, Map.of(DRAW, ROCK, WIN, PAPER, LOSS, SCISSOR),
                 PAPER, Map.of(LOSS, ROCK, DRAW, PAPER, WIN, SCISSOR),
                 SCISSOR, Map.of(WIN, ROCK, LOSS, PAPER, DRAW, SCISSOR));
+
         Game(Play elfPlay, Play myPlay) {
             this(elfPlay, myPlay, STATE_COMPUTER.get(elfPlay).get(myPlay));
         }
+
         Game(Play elfPlay, State state) {
             this(elfPlay, PLAY_COMPUTER.get(elfPlay).get(state), state);
         }
+
         public int value() {
             int stateScore = Map.of(LOSS, 0, DRAW, 3, WIN, 6).get(state);
             int myPlayScore = Map.of(ROCK, 1, PAPER, 2, SCISSOR, 3).get(myPlay);

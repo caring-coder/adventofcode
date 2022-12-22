@@ -69,8 +69,7 @@ public class Day16 {
         State max = null;
 
         do {
-            var state = todo.poll();
-
+            var state = todo.remove();
             var newStates = costs.keySet().stream()
                     .filter(route -> route.from.equals(state.currentValveId))
                     .filter(route -> !state.visited.contains(route.to))

@@ -1,62 +1,68 @@
 package pro.verron.aoc.y22;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
+import pro.verron.aoc.AdventOfCode;
 
-import static java.lang.System.out;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.groupingBy;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import static java.util.stream.IntStream.range;
+import static pro.verron.aoc.Assertions.assertEquals;
 
 public class Day03 {
-    private static final List<String> items = str2list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-
     public static void main(String[] args) throws IOException {
-        Path source = Path.of("input","y22", "day03-input.txt");
-        out.println(ex1(Files.lines(source)));
-        out.println(ex2(Files.lines(source)));
+        AdventOfCode aoc = new AdventOfCode(22, 3);
+        assertEquals(rucksackReorganization(aoc.testList(), Day03::extractPockets), 157, "Sample Part 1");
+        assertEquals(rucksackReorganization(aoc.trueList(), Day03::extractPockets), 7742, "Exercice Part 1");
+        assertEquals(rucksackReorganization(aoc.testList(), Day03::extractTeam), 70, "Sample Part 2");
+        assertEquals(rucksackReorganization(aoc.trueList(), Day03::extractTeam), 2276, "Exercice Part 2");
     }
 
-    private static String ex1(Stream<String> content) {
-        return content
-                .map(Day03::str2list)
-                .map(bag -> Stream
-                        .of(bag.subList(0, bag.size() / 2), bag.subList(bag.size() / 2, bag.size()))
-                        .reduce(items, Day03::intersect))
-                .map(list -> list.stream().findAny().orElseThrow())
-                .map(Day03::getPriority)
-                .reduce(Integer::sum)
-                .map(String::valueOf)
-                .orElse("No elfs found");
+    @FunctionalInterface
+    interface RucksackExtractor{
+        List<String> extract(BlockingQueue<String> queue);
     }
 
-    private static String ex2(Stream<String> content) {
-        AtomicInteger i = new AtomicInteger();
-        return content
-                .map(Day03::str2list)
-                .collect(groupingBy(line -> i.getAndIncrement() / 3))
-                .values()
-                .stream()
-                .map(strings -> strings.stream().reduce(items, Day03::intersect))
-                .map(l -> l.stream().findAny().orElseThrow())
-                .map(Day03::getPriority)
-                .reduce(Integer::sum)
-                .map(String::valueOf)
-                .orElse("No elfs found");
+    private static String intersect(String first, String second) {
+        return range(0, first.length())
+                .mapToObj(first::charAt)
+                .filter(c -> second.indexOf(c) >= 0)
+                .reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 
-    private static <T> List<T> intersect(List<T> accumulator, List<T> current) {
-        return accumulator.stream().filter(current::contains).toList();
+    private static String intersect(Collection<String> elements) {
+        return elements.stream().reduce(Day03::intersect).orElse("");
     }
 
-    private static int getPriority(String item) {
-        return items.indexOf(item) + 1;
+    private static int rucksackReorganization(List<String> rucksacks, RucksackExtractor extractor) {
+        int sum = 0;
+        var rucksacksQueue = new LinkedBlockingQueue<>(rucksacks);
+        while(!rucksacksQueue.isEmpty()) {
+            List<String> team = extractor.extract(rucksacksQueue);
+            Character common = intersect(team).charAt(0);
+            sum += computePriority(common);
+        }
+        return sum;
     }
 
-    private static List<String> str2list(String str) {
-        return stream(str.split("")).toList();
+    private static List<String> extractPockets(BlockingQueue<String> rucksacksQueue) {
+        String rucksack = rucksacksQueue.remove();
+        String pocket1 = rucksack.substring(0, rucksack.length() / 2);
+        String pocket2 = rucksack.substring(rucksack.length() / 2);
+        return List.of(pocket1, pocket2);
+    }
+
+    private static List<String> extractTeam(BlockingQueue<String> rucksacksQueue) {
+        List<String> team = new ArrayList<>();
+        rucksacksQueue.drainTo(team, 3);
+        return team;
+    }
+
+    private static int computePriority(Character item) {
+        return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(item) + 1;
     }
 }
