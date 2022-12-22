@@ -15,14 +15,14 @@ public record AdventOfCode(int year, int day) {
     private Path inputPath(String input) {
         return of(INPUT, "y%02d".formatted(year), "day%02d-%s.txt".formatted(day, input));
     }
-    private String inputString(String input) throws IOException {
+    private String trueString(String input) throws IOException {
         return readString(inputPath(input));
     }
-    public String inputString() throws IOException {
-        return inputString(INPUT);
+    public String trueString() throws IOException {
+        return trueString(INPUT);
     }
-    public String sampleString() throws IOException {
-        return inputString(SAMPLE);
+    public String testString() throws IOException {
+        return trueString(SAMPLE);
     }
     public Stream<String> testStream() throws IOException {
         return trueStream(SAMPLE);

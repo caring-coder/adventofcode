@@ -20,10 +20,10 @@ import static pro.verron.aoc.Direction.UP;
 public class Day17 {
     public static void main(String[] args) throws IOException {
         AdventOfCode adventOfCode = new AdventOfCode(22, 17);
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.sampleString()), 2022L), 3068, "Sample Part 1");
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.inputString()), 2022L), 3114, "Exercice Part 1");
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.sampleString()), 1000000000000L), 1514285714288L, "Sample Part 2");
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.inputString()), 1000000000000L), 1540804597682L, "Exercice Part 2");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.testString()), 2022L), 3068, "Sample Part 1");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.trueString()), 2022L), 3114, "Exercice Part 1");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.testString()), 1000000000000L), 1514285714288L, "Sample Part 2");
+        assertEquals(simulateRockFalls(parseDirections(adventOfCode.trueString()), 1000000000000L), 1540804597682L, "Exercice Part 2");
     }
     static final List<Shape> SHAPES = List.of(
             new Shape(List.of("####"), 1, 4, new Coordinate(3, 2)),
