@@ -1,8 +1,8 @@
 package pro.verron.aoc.y22;
 
 import pro.verron.aoc.AdventOfCode;
-import pro.verron.aoc.Coordinate;
-import pro.verron.aoc.Direction;
+import pro.verron.aoc.utils.board.Coordinate;
+import pro.verron.aoc.utils.board.Direction;
 
 import java.io.IOException;
 import java.util.*;
@@ -13,9 +13,9 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.LongStream.rangeClosed;
-import static pro.verron.aoc.Assertions.assertEquals;
-import static pro.verron.aoc.Direction.DOWN;
-import static pro.verron.aoc.Direction.UP;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
+import static pro.verron.aoc.utils.board.Direction.DOWN;
+import static pro.verron.aoc.utils.board.Direction.UP;
 
 public class Day17 {
     public static void main(String[] args) throws IOException {
@@ -40,7 +40,7 @@ public class Day17 {
         var cave = new Cave(7, emptyList());
         var directions = new LinkedList<>(jetDirections);
         var shapes = new LinkedList<>(SHAPES);
-        Map<Integer, Map<Integer, Map<Cave, SortedMap<Long, Long>>>> steps = new HashMap<>();
+        Map<Integer, Map<Integer, Map<Cave, SortedMap<Integer, Long>>>> steps = new HashMap<>();
         Shape shape = shapes.remove();
         long nbShapesFallen = 0;
         long skipped = 0;
@@ -55,21 +55,21 @@ public class Day17 {
                 cave = cave.insert(shape);
                 if (shapes.isEmpty())
                     shapes.addAll(SHAPES);
-                long stackHeight = cave.stackHeight();
+                int stackHeight = cave.stackHeight();
                 shape = shapes.remove().move(UP.times(stackHeight), cave);
                 int size = shapes.size();
-                SortedMap<Long, Long> heights = steps
+                SortedMap<Integer, Long> heights = steps
                         .computeIfAbsent(size, shapeIndex -> new HashMap<>())
                         .computeIfAbsent(directions.size(), directionIndex -> new HashMap<>())
                         .computeIfAbsent(cave.last(20), subCave -> new TreeMap<>());
                 heights.put(stackHeight, nbShapesFallen);
                 if(heights.size() >= 3) {
-                    long ultimate = heights.lastKey();
-                    long penultimate = heights.headMap(ultimate).lastKey();
-                    long antepenultimate = heights.headMap(penultimate).lastKey();
+                    int ultimate = heights.lastKey();
+                    int penultimate = heights.headMap(ultimate).lastKey();
+                    int antepenultimate = heights.headMap(penultimate).lastKey();
 
-                    long deltaHeight = ultimate - penultimate;
-                    long penultimateDelta = penultimate - antepenultimate;
+                    int deltaHeight = ultimate - penultimate;
+                    int penultimateDelta = penultimate - antepenultimate;
                     if(deltaHeight == penultimateDelta) {
                         long deltaFallen = heights.get(ultimate) - heights.get(penultimate);
                         long times = (requestedFallen - nbShapesFallen) / deltaFallen;
@@ -140,10 +140,10 @@ public class Day17 {
                     .flatMap(i -> rangeClosed(shape.left(), shape.right()).mapToObj(j -> new Coordinate(i, j)))
                     .anyMatch(c -> shape.exists(c) && this.exists(c));
         }
-        public long stackHeight() {
+        public int stackHeight() {
             int endIndex = rows.size();
             int fromIndex = max(0, endIndex - 5);
-            return rows.subList(fromIndex, endIndex).stream().filter(s -> s.contains("#")).count() + fromIndex;
+            return (int) rows.subList(fromIndex, endIndex).stream().filter(s -> s.contains("#")).count() + fromIndex;
         }
         public boolean exists(Coordinate target) {
             if (target.row() < 0) return true;

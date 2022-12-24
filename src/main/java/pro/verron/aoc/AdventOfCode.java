@@ -35,16 +35,20 @@ public record AdventOfCode(int year, int day) {
     }
 
     public List<String> testList() throws IOException {
-        return trueList(SAMPLE);
+        return trueList(SAMPLE, 0);
     }public List<String> trueList() throws IOException {
-        return trueList(INPUT);
+        return trueList(INPUT, 0);
     }
 
-    private List<String> trueList(String input) throws IOException {
-        return Files.readAllLines(inputPath(input, 0));
+    private List<String> trueList(String input, int i) throws IOException {
+        return Files.readAllLines(inputPath(input, i));
     }
 
     public String testString(int i) throws IOException {
         return trueString(SAMPLE, i);
+    }
+
+    public List<String> testList(int i) throws IOException {
+        return trueList(SAMPLE, i);
     }
 }

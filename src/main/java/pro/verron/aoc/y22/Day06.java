@@ -5,7 +5,7 @@ import pro.verron.aoc.AdventOfCode;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-import static pro.verron.aoc.Assertions.assertEquals;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day06 {
     public static void main(String[] args) throws IOException {

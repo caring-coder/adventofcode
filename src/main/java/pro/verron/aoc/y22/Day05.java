@@ -8,7 +8,7 @@ import java.util.*;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.asLifoQueue;
 import static java.util.stream.Collectors.joining;
-import static pro.verron.aoc.Assertions.assertEquals;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day05 {
     public static void main(String[] args) throws IOException {

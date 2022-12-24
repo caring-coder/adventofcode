@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static pro.verron.aoc.Assertions.assertEquals;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day07 {
     public static void main(String[] args) throws IOException {

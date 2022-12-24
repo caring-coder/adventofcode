@@ -10,7 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.util.stream.IntStream.range;
-import static pro.verron.aoc.Assertions.assertEquals;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day03 {
     public static void main(String[] args) throws IOException {

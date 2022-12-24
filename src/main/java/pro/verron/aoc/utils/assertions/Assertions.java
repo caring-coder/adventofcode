@@ -1,4 +1,4 @@
-package pro.verron.aoc;
+package pro.verron.aoc.utils.assertions;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;

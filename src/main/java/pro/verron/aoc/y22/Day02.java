@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static pro.verron.aoc.Assertions.assertEquals;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.y22.Day02.Play.*;
 import static pro.verron.aoc.y22.Day02.State.*;
 

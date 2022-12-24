@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.stream.IntStream;
 
 import static java.util.Arrays.stream;
-import static pro.verron.aoc.Assertions.assertEquals;
+import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day01 {
     public static void main(String[] args) throws IOException {
