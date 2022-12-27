@@ -28,4 +28,9 @@ public class Assertions {
     public static void assertEquals(long actual, long expected){
         assertEquals(actual, expected, "assertion n.%d".formatted(counter.getAndIncrement()));
     }
+
+    public static void assertThat(boolean fact, String msg) {
+        if(!fact)
+            throw new AssertionError(msg);
+    }
 }

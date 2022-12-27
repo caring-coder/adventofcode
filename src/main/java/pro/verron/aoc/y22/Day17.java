@@ -1,7 +1,7 @@
 package pro.verron.aoc.y22;
 
 import pro.verron.aoc.AdventOfCode;
-import pro.verron.aoc.utils.board.Coordinate;
+import pro.verron.aoc.utils.board.Vector;
 import pro.verron.aoc.utils.board.Direction;
 
 import java.io.IOException;
@@ -26,11 +26,11 @@ public class Day17 {
         assertEquals(simulateRockFalls(parseDirections(adventOfCode.trueString()), 1000000000000L), 1540804597682L, "Exercice Part 2");
     }
     static final List<Shape> SHAPES = List.of(
-            new Shape(List.of("####"), 1, 4, new Coordinate(3, 2)),
-            new Shape(List.of(" # ", "###", " # "), 3, 3, new Coordinate(3, 2)),
-            new Shape(List.of("###", "  #", "  #"), 3, 3, new Coordinate(3, 2)),
-            new Shape(List.of("#", "#", "#", "#"), 4, 1, new Coordinate(3, 2)),
-            new Shape(List.of("##", "##"), 2, 2, new Coordinate(3, 2)));
+            new Shape(List.of("####"), 1, 4, new Vector(3, 2)),
+            new Shape(List.of(" # ", "###", " # "), 3, 3, new Vector(3, 2)),
+            new Shape(List.of("###", "  #", "  #"), 3, 3, new Vector(3, 2)),
+            new Shape(List.of("#", "#", "#", "#"), 4, 1, new Vector(3, 2)),
+            new Shape(List.of("##", "##"), 2, 2, new Vector(3, 2)));
     static LinkedList<Direction> parseDirections(String input) {
         return stream(input.split(""))
                 .map(character -> character.equals("<") ? Direction.LEFT : Direction.RIGHT)
@@ -82,36 +82,36 @@ public class Day17 {
         } while (nbShapesFallen < requestedFallen);
         return cave.stackHeight() + skipped;
     }
-    record Shape(List<String> s, int height, int width, Coordinate coordinate) {
+    record Shape(List<String> s, int height, int width, Vector vector) {
         public long bottom() {
-            return coordinate().row();
+            return vector().row();
         }
         public long top() {
             return bottom() + height() - 1;
         }
         public long left() {
-            return coordinate.column();
+            return vector.column();
         }
         public long right() {
             return left() + width() - 1;
         }
         public Shape move(Direction direction, Cave cave) {
-            var nextHeight = coordinate.row() + direction.height();
+            var nextHeight = vector.row() + direction.height();
             int leftMost = cave.width() - this.width;
-            var suggestedCoordinate = coordinate.column() + direction.right();
+            var suggestedCoordinate = vector.column() + direction.right();
             var nextRight = max(0, min(suggestedCoordinate, leftMost));
-            var nextCoordinate = new Coordinate(nextHeight, nextRight);
+            var nextCoordinate = new Vector(nextHeight, nextRight);
             return new Shape(s, height, width, nextCoordinate);
         }
         public boolean canMove(Direction direction, Cave cave) {
             return !cave.collides(this.move(direction, cave));
         }
-        public boolean exists(Coordinate target) {
+        public boolean exists(Vector target) {
             if (target.row() < bottom()) return false;
             if (target.row() > top()) return false;
             if (target.column() < left()) return false;
             if (target.column() > right()) return false;
-            return existsInShapeCoordinate(target.row() - coordinate.row(), target.column() - coordinate.column());
+            return existsInShapeCoordinate(target.row() - vector.row(), target.column() - vector.column());
         }
         private boolean existsInShapeCoordinate(long i, long j) {
             return s.get((int)i).charAt((int)j) == '#';
@@ -126,7 +126,7 @@ public class Day17 {
                 StringBuilder sb = new StringBuilder(rows.size() <= i ? " ".repeat(width) : rows.get(i));
                 if (shape.bottom() <= i && i <= shape.top()) {
                     for (int j = 0; j < width; j++) {
-                        Coordinate target = new Coordinate(i, j);
+                        Vector target = new Vector(i, j);
                         sb.replace(j, j + 1, shape.exists(target) || this.exists(target) ? "#" : " ");
                     }
                 }
@@ -137,7 +137,7 @@ public class Day17 {
 
         public boolean collides(Shape shape) {
             return rangeClosed(shape.bottom(), shape.top()).boxed()
-                    .flatMap(i -> rangeClosed(shape.left(), shape.right()).mapToObj(j -> new Coordinate(i, j)))
+                    .flatMap(i -> rangeClosed(shape.left(), shape.right()).mapToObj(j -> new Vector(i, j)))
                     .anyMatch(c -> shape.exists(c) && this.exists(c));
         }
         public int stackHeight() {
@@ -145,7 +145,7 @@ public class Day17 {
             int fromIndex = max(0, endIndex - 5);
             return (int) rows.subList(fromIndex, endIndex).stream().filter(s -> s.contains("#")).count() + fromIndex;
         }
-        public boolean exists(Coordinate target) {
+        public boolean exists(Vector target) {
             if (target.row() < 0) return true;
             if (target.row() >= stackHeight()) return false;
             if (target.column() < 0) return true;

@@ -8,4 +8,7 @@ public record Direction(int height, int right) {
     public Direction times(int nb) {
         return new Direction(nb * height, nb * right);
     }
+    public Vector from(Vector vector) {
+        return new Vector(vector.row() + height, vector.column() + right);
+    }
 }
