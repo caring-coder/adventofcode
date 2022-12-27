@@ -31,28 +31,15 @@ public class Day09 {
         assertThat(nbKnots >= 2, "The rope cannot have less than two ends and zero intermediate knots");
         var pattern = Pattern.compile("([RULD]) (\\d+)");
         var startPosition = new Vector(0, 0);
-        var vectors = range(0, nbKnots)
-                .mapToObj(i -> startPosition)
-                .collect(toCollection(LinkedList::new));
+        var rope = new Rope(nbKnots, startPosition);
         var places = new HashSet<>(Set.of(startPosition));
         input.map(pattern::matcher)
                 .filter(Matcher::matches)
                 .flatMap(Day09::parseInputLines)
                 .map(Day09::parseDirection)
-                .forEachOrdered(d -> {
-                    var head = vectors.getFirst();
-                    vectors.set(0, d.from(head));
-                    for (int i = 1; i < nbKnots; i++) {
-                        var prev = vectors.get(i - 1);
-                        var curr = vectors.get(i);
-                        var delta = prev.minus(curr);
-                        if(!delta.isNormalized()) {
-                            vectors.set(i, curr.add(delta.normalized()));
-                        }
-                    }
-                    var tail = vectors.getLast();
-                    places.add(tail);
-                });
+                .map(rope::moveHead)
+                .map(Rope::getTail)
+                .forEachOrdered(places::add);
         return places.size();
     }
 
@@ -63,6 +50,31 @@ public class Day09 {
                 .repeat(directionValue)
                 .chars()
                 .mapToObj(Character::toString);
+    }
+
+    public static class Rope {
+        private final LinkedList<Vector> knots;
+        public Rope(int nbKnots, Vector startPosition){
+            knots = range(0, nbKnots)
+                    .mapToObj(i -> startPosition)
+                    .collect(toCollection(LinkedList::new));
+        }
+        public Rope moveHead(Direction direction) {
+            var head = knots.getFirst();
+            knots.set(0, direction.from(head));
+            for (int i = 1; i < knots.size(); i++) {
+                var prev = knots.get(i - 1);
+                var curr = knots.get(i);
+                var delta = prev.minus(curr);
+                if(!delta.isNormalized()) {
+                    knots.set(i, curr.add(delta.normalized()));
+                }
+            }
+            return this;
+        }
+        public Vector getTail() {
+            return knots.getLast();
+        }
     }
 
     private static Direction parseDirection(String s) {
