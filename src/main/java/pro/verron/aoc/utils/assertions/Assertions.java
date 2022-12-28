@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Assertions {
     private static final AtomicInteger counter = new AtomicInteger();
     public static final String TEMPLATE_NUMBER = "actual was %d, instead of expected %d";
-    public static final String TEMPLATE_STR = "actual was %s, instead of expected %s";
+    public static final String TEMPLATE_STR = "actual was %n%s, %ninstead of expected %n%s";
     public static void assertEquals(int actual, int expected, String msg) {
         if (actual != expected)
             throw new AssertionError(msg + " " + TEMPLATE_NUMBER.formatted(actual, expected));
