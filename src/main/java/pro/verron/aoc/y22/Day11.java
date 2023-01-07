@@ -23,13 +23,13 @@ import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 public class Day11 {
     public static void main(String[] args) throws IOException {
         AdventOfCode aoc = new AdventOfCode(22, 11);
-        assertEquals(monkeyInTheMiddle(aoc.testStream("\r?\n\r?\n"), 20, 3), 10605);
-        assertEquals(monkeyInTheMiddle(aoc.trueStream("\r?\n\r?\n"), 20, 3), 54054);
-        assertEquals(monkeyInTheMiddle(aoc.testStream("\r?\n\r?\n"), 10_000, 1), 2713310158L);
-        assertEquals(monkeyInTheMiddle(aoc.trueStream("\r?\n\r?\n"), 10_000, 1), 14314925001L);
+        assertEquals(new Day11().monkeyInTheMiddle(aoc.testStream("\n\n"), 20, 3), 10605);
+        assertEquals(new Day11().monkeyInTheMiddle(aoc.trueStream("\n\n"), 20, 3), 54054);
+        assertEquals(new Day11().monkeyInTheMiddle(aoc.testStream("\n\n"), 10_000, 1), 2713310158L);
+        assertEquals(new Day11().monkeyInTheMiddle(aoc.trueStream("\n\n"), 10_000, 1), 14314925001L);
     }
 
-    private static long monkeyInTheMiddle(Stream<String> input, int nbRound, int reliefFactor) {
+    private long monkeyInTheMiddle(Stream<String> input, int nbRound, int reliefFactor) {
         Map<Integer, Monkey> monkeys = input.map(Monkey::parse).collect(toMap(m->m.id, m->m));
         Long mod_all = monkeys.values().stream().map(Monkey::test).map(Test::test).map(DivisibleBy::i).reduce(1L, (op1, op2) -> op1 * op2);
         Map<Integer, AtomicLong> counter = new HashMap<>();

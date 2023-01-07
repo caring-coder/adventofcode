@@ -1,48 +1,43 @@
 package pro.verron.aoc.utils.board;
 
-import java.util.OptionalInt;
-import java.util.function.IntFunction;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.IntStream.range;
-import static java.util.stream.Stream.iterate;
 
-public record Board<T>(int height, int width, IntFunction<T> valuation) {
+public record Board<T>(int height, int width, Getter<T> getter, Setter<T> setter) {
 
-
-
-
-    public class Square {
-        private final int index;
-        public Square(int index) {
-            this.index = index;
-        }
-        public Stream<Square> lineOfSight(Direction direction) {
-            return iterate(next(index, direction), OptionalInt::isPresent, i -> next(i.orElseThrow(), direction))
-                    .mapToInt(OptionalInt::orElseThrow)
-                    .mapToObj(Square::new);
-        }
-        public T value(){
-            return valuation.apply(index);
-        }
-    }
-    public Square square(int index){
-        return new Square(index);
+    public Board(int height, int width, Getter<T> getter){
+        this(height, width, getter, null);
     }
 
-    public Stream<Board<T>.Square> squares() {
+    public Set<Square<T>> findAll(T v) {
+        return squares().filter(s->s.value().equals(v)).collect(Collectors.toSet());
+    }
+
+    public Square<T> find(T v) {
+        return squares().filter(s->s.value().equals(v)).findFirst().orElseThrow();
+    }
+
+    public Square<T> square(int index){
+        return new Square<>(index, this);
+    }
+
+    public Stream<Square<T>> squares() {
         return range(0, height * width)
                 .mapToObj(this::square);
     }
 
-    public OptionalInt next(int index, Direction direction) {
+    public Optional<Square<T>> next(int index, Direction direction) {
         int height = index / width;
         int right = index % width;
         height += direction.height();
         right += direction.right();
-        if(0 > height || height >= this.height) return OptionalInt.empty();
-        if(0 > right || right >= width) return OptionalInt.empty();
-        return OptionalInt.of((height * width) + (right % width));
+        if(0 > height || height >= this.height) return Optional.empty();
+        if(0 > right || right >= width) return Optional.empty();
+        return Optional.of(new Square<>((height * width) + (right % width), this));
     }
     public boolean contains(int index) {
         return 0 <= index && index < height * width;

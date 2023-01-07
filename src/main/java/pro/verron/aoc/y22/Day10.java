@@ -18,16 +18,16 @@ import static pro.verron.aoc.y22.Day10.Operation.NOOP;
 public class Day10 {
     public static void main(String[] args) throws IOException {
         AdventOfCode aoc = new AdventOfCode(22, 10);
-        assertEquals(cathodeRayTube(aoc.testStream(), Day10::signalStrength),(Integer) 13140);
-        assertEquals(cathodeRayTube(aoc.trueStream(), Day10::signalStrength),(Integer) 12840);
-        assertEquals(cathodeRayTube(aoc.testStream(), Day10::crtDisplay), """
+        assertEquals(new Day10().cathodeRayTube(aoc.testStream(), Day10::signalStrength),(Integer) 13140);
+        assertEquals(new Day10().cathodeRayTube(aoc.trueStream(), Day10::signalStrength),(Integer) 12840);
+        assertEquals(new Day10().cathodeRayTube(aoc.testStream(), Day10::crtDisplay), """
                 ██..██..██..██..██..██..██..██..██..██..
                 ███...███...███...███...███...███...███.
                 ████....████....████....████....████....
                 █████.....█████.....█████.....█████.....
                 ██████......██████......██████......████
                 ███████.......███████.......███████.....""");
-        assertEquals(cathodeRayTube(aoc.trueStream(), Day10::crtDisplay), """
+        assertEquals(new Day10().cathodeRayTube(aoc.trueStream(), Day10::crtDisplay), """
                 ████.█..█...██.████.███....██.████.████.
                 ...█.█.█.....█.█....█..█....█.█.......█.
                 ..█..██......█.███..███.....█.███....█..
@@ -58,7 +58,7 @@ public class Day10 {
                + registerAtCycle(220, integers);
     }
 
-    private static <T> T cathodeRayTube(Stream<String> input, Function<int[], T> signalStrength) {
+    private <T> T cathodeRayTube(Stream<String> input, Function<int[], T> signalStrength) {
         AtomicInteger register = new AtomicInteger(1);
         int[] integers = input.map(Instruction::parse)
                 .flatMap(Instruction::effects)

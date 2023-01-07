@@ -24,11 +24,11 @@ public class Day05 {
     }
 
     private static Object supplyStacks(String input, CrateMover mover) {
-        String[] split = input.split("\r?\n\r?\n");
+        String[] split = input.split("\n\n");
 
         List<Queue<Character>> l = computeStacks(split[0]);
 
-        Arrays.stream(split[1].split("\r?\n"))
+        Arrays.stream(split[1].split("\n"))
                 .map(s -> s.split(" "))
                 .map(a -> new Move(a[1], a[3], a[5]))
                 .forEach(m -> mover.apply(m, l));

@@ -3,49 +3,49 @@ package pro.verron.aoc.y22;
 import pro.verron.aoc.AdventOfCode;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.y22.Day02.Play.*;
 import static pro.verron.aoc.y22.Day02.State.*;
 
-public class Day02 {
+public record Day02(List<Strategy> strategies) {
+
     public static void main(String[] args) throws IOException {
-        AdventOfCode adventOfCode = new AdventOfCode(22, 2);
-        assertEquals(rockPaperScissors(adventOfCode.testStream(), Day02::XYZareMoves), 15, "Sample Part 1");
-        assertEquals(rockPaperScissors(adventOfCode.trueStream(), Day02::XYZareMoves), 10404, "Exercice Part 1");
-        assertEquals(rockPaperScissors(adventOfCode.testStream(), Day02::XYZareIntents), 12, "Sample Part 2");
-        assertEquals(rockPaperScissors(adventOfCode.trueStream(), Day02::XYZareIntents), 10334, "Exercice Part 1");
+        AdventOfCode aoc = new AdventOfCode(22, 2);
+        Day02 sample = new Day02(aoc.testStream().map(Day02::parseStrategy).toList());
+        Day02 custom = new Day02(aoc.trueStream().map(Day02::parseStrategy).toList());
+        assertEquals(sample.rockPaperScissors(Day02::XYZareMoves), 15);
+        assertEquals(custom.rockPaperScissors(Day02::XYZareMoves), 10404);
+        assertEquals(sample.rockPaperScissors(Day02::XYZareIntents), 12);
+        assertEquals(custom.rockPaperScissors(Day02::XYZareIntents), 10334);
     }
 
-    @FunctionalInterface
-    interface GameParser {
-        Game parse(String elfToken, String yourToken);
-
-        default Game parse(String line) {
-            return parse(line.split(" "));
-        }
-
-        default Game parse(String[] tokens) {
-            return parse(tokens[0], tokens[1]);
-        }
+    static Strategy parseStrategy(String line) {
+        return parseStrategy(line.split(" "));
     }
 
-    private static Game XYZareMoves(String elfToken, String yourToken) {
-        Function<String, Play> elfMoveParser = parsePlay("A", "B", "C");
-        Function<String, Play> yourMoveParser = parsePlay("X", "Y", "Z");
-        return new Game(elfMoveParser.apply(elfToken), yourMoveParser.apply(yourToken));
+    static Strategy parseStrategy(String[] tokens) {
+        return new Strategy(tokens[0].charAt(0), tokens[1].charAt(0));
     }
 
-    private static Game XYZareIntents(String elfToken, String yourToken) {
-        Function<String, Play> elfMoveParser = parsePlay("A", "B", "C");
-        Function<String, State> intentParser = parseIntent("X", "Y", "Z");
-        return new Game(elfMoveParser.apply(elfToken), intentParser.apply(yourToken));
+    record Strategy(Character elfToken, Character myToken){ }
+
+    private static Game XYZareMoves(Strategy strategy) {
+        Function<Character, Play> elfMoveParser = parsePlay('A', 'B', 'C');
+        Function<Character, Play> yourMoveParser = parsePlay('X', 'Y', 'Z');
+        return new Game(elfMoveParser.apply(strategy.elfToken()), yourMoveParser.apply(strategy.myToken()));
     }
 
-    private static Function<String, Play> parsePlay(String rock, String paper, String scissor) {
+    private static Game XYZareIntents(Strategy strategy) {
+        Function<Character, Play> elfMoveParser = parsePlay('A', 'B', 'C');
+        Function<Character, State> intentParser = parseIntent('X', 'Y', 'Z');
+        return new Game(elfMoveParser.apply(strategy.elfToken()), intentParser.apply(strategy.myToken()));
+    }
+
+    private static Function<Character, Play> parsePlay(Character rock, Character paper, Character scissor) {
         return token -> {
             if (token.equals(rock)) return ROCK;
             else if (token.equals(paper)) return PAPER;
@@ -54,7 +54,7 @@ public class Day02 {
         };
     }
 
-    private static Function<String, State> parseIntent(String loss, String draw, String win) {
+    private static Function<Character, State> parseIntent(Character loss, Character draw, Character win) {
         return token -> {
             if (token.equals(loss)) return LOSS;
             else if (token.equals(draw)) return DRAW;
@@ -63,8 +63,8 @@ public class Day02 {
         };
     }
 
-    private static int rockPaperScissors(Stream<String> content, GameParser gameParser) {
-        return content.map(gameParser::parse).mapToInt(Game::value).sum();
+    private int rockPaperScissors(Function<Strategy, Game> player) {
+        return this.strategies.stream().map(player).mapToInt(Game::value).sum();
     }
 
     public enum Play {ROCK, PAPER, SCISSOR}

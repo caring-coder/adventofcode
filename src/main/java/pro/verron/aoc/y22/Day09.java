@@ -21,13 +21,13 @@ import static pro.verron.aoc.utils.assertions.Assertions.assertThat;
 public class Day09 {
     public static void main(String[] args) throws IOException {
         AdventOfCode aoc = new AdventOfCode(22, 9);
-        assertEquals(ropeBridge(aoc.testStream(), 2),13);
-        assertEquals(ropeBridge(aoc.trueStream(), 2),6098);
-        assertEquals(ropeBridge(aoc.testStream(2), 10),36);
-        assertEquals(ropeBridge(aoc.trueStream(), 10),2597);
+        assertEquals(new Day09().ropeBridge(aoc.testStream(), 2),13);
+        assertEquals(new Day09().ropeBridge(aoc.trueStream(), 2),6098);
+        assertEquals(new Day09().ropeBridge(aoc.testStream(2), 10),36);
+        assertEquals(new Day09().ropeBridge(aoc.trueStream(), 10),2597);
     }
 
-    private static int ropeBridge(Stream<String> input, int nbKnots) {
+    private int ropeBridge(Stream<String> input, int nbKnots) {
         assertThat(nbKnots >= 2, "The rope cannot have less than two ends and zero intermediate knots");
         var pattern = Pattern.compile("([RULD]) (\\d+)");
         var startPosition = new Vector(0, 0);
