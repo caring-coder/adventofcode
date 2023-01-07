@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 import static java.nio.file.Files.lines;
@@ -25,6 +26,11 @@ public record AdventOfCode(int year, int day) {
     private Stream<String> stream(String input, int i) throws IOException {
         return lines(inputPath(input, i));
     }
+
+    private Stream<String> stream(String input, int i, String delimiter) throws IOException {
+        return new Scanner(inputPath(input, i)).useDelimiter(delimiter).tokens();
+    }
+
     private List<String> list(String input, int i) throws IOException {
         return Files.readAllLines(inputPath(input, i));
     }
@@ -40,6 +46,15 @@ public record AdventOfCode(int year, int day) {
     public Stream<String> trueStream() throws IOException {
         return stream(INPUT, 0);
     }
+
+    public Stream<String> trueStream(String delimiter) throws IOException {
+        return stream(INPUT, 0, delimiter);
+    }
+
+    public Stream<String> trueStream(int i, String delimiter) throws IOException {
+        return stream(INPUT, i, delimiter);
+    }
+
     public List<String> testList() throws IOException {
         return list(SAMPLE, 0);
     }
@@ -51,5 +66,13 @@ public record AdventOfCode(int year, int day) {
     }
     public Stream<String> testStream(int i) throws IOException {
         return stream(SAMPLE, i);
+    }
+
+    public Stream<String> testStream(String delimiter) throws IOException {
+        return stream(SAMPLE, 0, delimiter);
+    }
+
+    public Stream<String> testStream(int i, String delimiter) throws IOException {
+        return stream(SAMPLE, i, delimiter);
     }
 }
