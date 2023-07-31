@@ -1,21 +1,35 @@
-== --- Day 4: The Ideal Stocking Stuffer ---
+== --- Day 3: Perfectly Spherical Houses in a Vacuum ---
 
-Santa needs help https://en.wikipedia.org/wiki/Bitcoin#Mining[mining] some AdventCoins (very similar to https://en.wikipedia.org/wiki/Bitcoin[bitcoins]) to use as gifts for all the economically forward-thinking little girls and boys.
+Santa is delivering presents to an infinite two-dimensional grid of houses.
 
-To do this, he needs to find https://en.wikipedia.org/wiki/MD5[MD5] hashes which, in https://en.wikipedia.org/wiki/Hexadecimal[hexadecimal], start with at least _five zeroes_.
-The input to the MD5 hash is some secret key (your puzzle input, given below) followed by a number in decimal.
-To mine AdventCoins, you must find Santa the lowest positive number (no leading zeroes: `+1+`, `+2+`, `+3+`, ...) that produces such a hash.
+He begins by delivering a present to the house at his starting location, and then an elf at the North Pole calls him via radio and tells him where to move next.
+Moves are always exactly one house to the north (`+^+`), south (`+v+`), east (`+>+`), or west (`+<+`).
+After each move, he delivers another present to the house at his new location.
+
+However, the elf back at the north pole has had a little too much eggnog, and so his directions are a little off, and Santa ends up visiting some houses more than once.
+How many houses receive _at least one present_?
 
 For example:
 
-* If your secret key is `+abcdef+`, the answer is `+609043+`, because the MD5 hash of `+abcdef609043+` starts with five zeroes (`+000001dbbfa...+`), and it is the lowest such number to do so.
-* If your secret key is `+pqrstuv+`, the lowest number it combines with to make an MD5 hash starting with five zeroes is `+1048970+`; that is, the MD5 hash of `+pqrstuv1048970+` looks like `+000006136ef...+`.
+* `+>+` delivers presents to `+2+` houses: one at the starting location, and one to the east.
+* `+^>v<+` delivers presents to `+4+` houses in a square, including twice to the house at his starting/ending location.
+* `+^v^v^v^v^v+` delivers a bunch of presents to some very lucky children at only `+2+` houses.
 
-Your puzzle answer was `+346386+`.
+Your puzzle answer was `+2592+`.
 
 [[part2]]
 == --- Part Two ---
 
-Now find one that starts with _six zeroes_.
+The next year, to speed up the process, Santa creates a robot version of himself, _Robo-Santa_, to deliver presents with him.
 
-Your puzzle answer was `+9958218+`.
+Santa and Robo-Santa start at the same location (delivering two presents to the same starting house), then take turns moving based on instructions from the elf, who is eggnoggedly reading from the same script as the previous year.
+
+This year, how many houses receive _at least one present_?
+
+For example:
+
+* `+^v+` delivers presents to `+3+` houses, because Santa goes north, and then Robo-Santa goes south.
+* `+^>v<+` now delivers presents to `+3+` houses, and Santa and Robo-Santa end up back where they started.
+* `+^v^v^v^v^v+` now delivers presents to `+11+` houses, with Santa going one direction and Robo-Santa going the other.
+
+Your puzzle answer was `+2360+`.

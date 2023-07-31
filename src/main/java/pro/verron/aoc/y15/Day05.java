@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 
 public class Day05 {
     public String ex1(List<String> content) {
-        Predicate<String> threeVowels = Pattern.compile("(?:[aeiou][^aeiou]*){3}").asMatchPredicate();
+        Predicate<String> threeVowels = str -> str.replaceAll("[^aeiou]", "").length() >= 3;
         Predicate<String> duplicateCharacter = (str) -> Pattern.compile("(.)\\1").matcher(str).find();
-        Predicate<String> naughtySubstrings = Pattern.compile("(ab|cd|pq|xy)").asMatchPredicate();
+        Predicate<String> naughtySubstrings = Pattern.compile("(ab)|(cd)|(pq)|(xy)").asPredicate().negate();
         return String.valueOf(content.stream()
                 .filter(threeVowels)
                 .filter(duplicateCharacter)
