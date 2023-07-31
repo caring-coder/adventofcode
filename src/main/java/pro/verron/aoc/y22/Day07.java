@@ -42,7 +42,7 @@ public class Day07 {
         return String.valueOf(noSpaceLeftOnDevice2(content));
     }
 
-    static class File {
+    public static class File {
         private final int size;
 
         public File(int size) {

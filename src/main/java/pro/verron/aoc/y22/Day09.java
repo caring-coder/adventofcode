@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.IntStream.range;
-import static pro.verron.aoc.utils.assertions.Assertions.assertThat;
 
 public class Day09 {
     public String ex1(Stream<String> content) {
@@ -25,7 +24,7 @@ public class Day09 {
     }
 
     private int ropeBridge(Stream<String> input, int nbKnots) {
-        assertThat(nbKnots >= 2, "The rope cannot have less than two ends and zero intermediate knots");
+        assert nbKnots >= 2 : "The rope cannot have less than two ends and zero intermediate knots";
         var pattern = Pattern.compile("([RULD]) (\\d+)");
         var startPosition = new Vector(0, 0);
         var rope = new Rope(nbKnots, startPosition);
