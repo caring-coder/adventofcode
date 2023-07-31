@@ -1,33 +1,41 @@
 package pro.verron.aoc.y15;
 
+import java.util.Arrays;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.sort;
-import static java.util.Arrays.stream;
 
 public class Day02 {
-    public String ex1(Stream<String> content) {
+    private static String ex(Stream<String> content, Function<Box, Integer> wrappingPaperSurface) {
         return content
                 .map(line -> line.split("x"))
-                .map(line -> stream(line).mapToInt(Integer::parseInt).toArray())
+                .map(Arrays::stream)
+                .map(dimensions -> dimensions.mapToInt(Integer::parseInt))
+                .map(IntStream::toArray)
                 .map(dimensions -> new Box(dimensions[0], dimensions[1], dimensions[2]))
-                .map(box -> box.surface() + box.smallestSizeArea())
+                .map(wrappingPaperSurface)
                 .reduce(Integer::sum)
                 .map(String::valueOf)
-                .orElse("No elfs found");
+                .orElse("No box found");
+    }
+
+    private static int wrappingPaperSurface(Box box) {
+        return box.surface() + box.smallestSizeArea();
+    }
+
+    private static int ribbonLength(Box box) {
+        return box.smallestSizePerimeter() + box.volume();
+    }
+
+    public String ex1(Stream<String> content) {
+        return ex(content, Day02::wrappingPaperSurface);
     }
 
     public String ex2(Stream<String> content) {
-        return content
-                .map(line -> line.split("x"))
-                .map(line -> stream(line).mapToInt(Integer::parseInt).toArray())
-                .map(dimensions -> new Box(dimensions[0], dimensions[1], dimensions[2]))
-                .map(box -> box.smallestSizePerimeter() + box.volume())
-                .reduce(Integer::sum)
-                .map(String::valueOf)
-                .orElse("No elfs found");
+        return ex(content, Day02::ribbonLength);
     }
-
 
     private record Box(int length, int depth, int height) {
         Box(int length, int depth, int height) {
@@ -39,9 +47,7 @@ public class Day02 {
         }
 
         public int surface() {
-            return 2 * height * length
-                    + 2 * height * depth
-                    + 2 * length * depth;
+            return 2 * (height * length + height * depth + length * depth);
         }
 
         public int smallestSizeArea() {
@@ -49,8 +55,7 @@ public class Day02 {
         }
 
         public int smallestSizePerimeter() {
-            return 2 * depth
-                    + 2 * height;
+            return 2 * (depth + height);
         }
 
         public int volume() {

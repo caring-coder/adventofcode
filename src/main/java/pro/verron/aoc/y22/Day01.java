@@ -1,6 +1,6 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCodeDelimiter;
+import pro.verron.aoc.core.AdventOfCodeDelimiter;
 
 import java.util.Collection;
 import java.util.List;
