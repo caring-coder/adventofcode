@@ -1,8 +1,5 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
@@ -11,31 +8,18 @@ import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.y22.Day10.Operation.ADDX;
 import static pro.verron.aoc.y22.Day10.Operation.NOOP;
 
 public class Day10 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 10);
-        assertEquals(new Day10().cathodeRayTube(aoc.testStream(), Day10::signalStrength),(Integer) 13140);
-        assertEquals(new Day10().cathodeRayTube(aoc.trueStream(), Day10::signalStrength),(Integer) 12840);
-        assertEquals(new Day10().cathodeRayTube(aoc.testStream(), Day10::crtDisplay), """
-                ██..██..██..██..██..██..██..██..██..██..
-                ███...███...███...███...███...███...███.
-                ████....████....████....████....████....
-                █████.....█████.....█████.....█████.....
-                ██████......██████......██████......████
-                ███████.......███████.......███████.....""");
-        assertEquals(new Day10().cathodeRayTube(aoc.trueStream(), Day10::crtDisplay), """
-                ████.█..█...██.████.███....██.████.████.
-                ...█.█.█.....█.█....█..█....█.█.......█.
-                ..█..██......█.███..███.....█.███....█..
-                .█...█.█.....█.█....█..█....█.█.....█...
-                █....█.█..█..█.█....█..█.█..█.█....█....
-                ████.█..█..██..█....███...██..█....████.""");
+    public String ex1(Stream<String> content) {
+        return cathodeRayTube(content, Day10::signalStrength).toString();
     }
 
+    public String ex2(Stream<String> content) {
+        return cathodeRayTube(content, Day10::crtDisplay);
+
+    }
     private static String crtDisplay(int[] integers) {
         return IntStream.range(0, 40 * 6)
                 .mapToObj(i -> abs(i % 40 - integers[i]) <= 1)

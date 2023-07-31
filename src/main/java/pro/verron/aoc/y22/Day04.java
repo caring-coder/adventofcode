@@ -1,8 +1,5 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-
-import java.io.IOException;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -10,15 +7,14 @@ import java.util.stream.Stream;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day04 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 4);
-        assertEquals(campCleanup(aoc.testStream(), Assignment::hasFullOverlap), 2, "Sample Part 1");
-        assertEquals(campCleanup(aoc.trueStream(), Assignment::hasFullOverlap), 490, "Exercice Part 1");
-        assertEquals(campCleanup(aoc.testStream(), Assignment::hasSomeOverlap), 4, "Sample Part 2");
-        assertEquals(campCleanup(aoc.trueStream(), Assignment::hasSomeOverlap), 921, "Exercice Part 2");
+    public String ex1(Stream<String> content) {
+        return String.valueOf(campCleanup(content, Assignment::hasFullOverlap));
+    }
+
+    public String ex2(Stream<String> content) {
+        return String.valueOf(campCleanup(content, Assignment::hasSomeOverlap));
     }
 
     record Assignment(Set<Integer> assignment1, Set<Integer> assigment2) {

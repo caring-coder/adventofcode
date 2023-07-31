@@ -1,8 +1,5 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.ToIntFunction;
@@ -11,15 +8,23 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day07 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 7);
-        assertEquals(noSpaceLeftOnDevice(aoc.testStream()), 95437, "Sample Part 1");
-        assertEquals(noSpaceLeftOnDevice(aoc.trueStream()), 1778099, "Exercice Part 1");
-        assertEquals(noSpaceLeftOnDevice2(aoc.testStream()), 24933642, "Sample Part 2");
-        assertEquals(noSpaceLeftOnDevice2(aoc.trueStream()), 21756443, "Exercice Part 2");
+    private static int noSpaceLeftOnDevice2(Stream<String> listing) {
+
+        ListingParser lp = new ListingParser();
+        listing.forEach(lp::parse);
+        ToIntFunction<Stream<Directory>> function = directories -> directories
+                .filter(d -> d.size >= 30000000 - (70000000 - lp.size()))
+                .min(comparing(Directory::size))
+                .map(Directory::size)
+                .orElseThrow();
+        Stream<Directory> directories = lp.directories();
+        return function.applyAsInt(directories);
+    }
+
+    public String ex1(Stream<String> content) {
+        return String.valueOf(noSpaceLeftOnDevice(content));
     }
 
     private static int noSpaceLeftOnDevice(Stream<String> listing) {
@@ -33,34 +38,23 @@ public class Day07 {
         return function.applyAsInt(directories);
     }
 
-    private static int noSpaceLeftOnDevice2(Stream<String> listing) {
-
-        ListingParser lp = new ListingParser();
-        listing.forEach(lp::parse);
-        ToIntFunction<Stream<Directory>> function = directories -> directories
-                .filter(d -> d.size >= 30000000 - (70000000 - lp.size())  )
-                .min(comparing(Directory::size))
-                .map(Directory::size)
-                .orElseThrow();
-        Stream<Directory> directories = lp.directories();
-        return function.applyAsInt(directories);
+    public String ex2(Stream<String> content) {
+        return String.valueOf(noSpaceLeftOnDevice2(content));
     }
 
     static class File {
         private final int size;
+
         public File(int size) {
             this.size = size;
         }
+
         public File(String size) {
             this(Integer.parseInt(size));
         }
-
-        public int size() {
-            return size;
-        }
     }
 
-    static class Directory {
+    public static class Directory {
         private final Directory parent;
         private final String name;
         private final List<Directory> directories = new ArrayList<>();
@@ -81,7 +75,7 @@ public class Day07 {
 
         private void resetSize(int size) {
             this.size += size;
-            if(parent!=null)
+            if (parent != null)
                 parent.resetSize(size);
         }
 
@@ -91,7 +85,7 @@ public class Day07 {
 
         public Stream<Directory> directories() {
             return directories.stream()
-                    .mapMulti((dir,consumer) -> {
+                    .mapMulti((dir, consumer) -> {
                         consumer.accept(dir);
                         dir.directories().forEach(consumer);
                     });
@@ -109,14 +103,15 @@ public class Day07 {
     public static class ListingParser {
         public static final Pattern FILE_PATTERN = Pattern.compile("(\\d+) (.+)");
         public static final Pattern DIRECTORY_PATTERN = Pattern.compile("dir (.+)");
-        private final Directory root = new Directory(null,  "/");
+        private final Directory root = new Directory(null, "/");
         private Directory cwd = root;
+
         public void parse(String line) {
             Matcher fileMatcher = FILE_PATTERN.matcher(line);
             Matcher directoryMatcher = DIRECTORY_PATTERN.matcher(line);
-            if(line.equals("$ cd /")) cwd = root;
-            else if(line.equals("$ ls")) { /* DO NOTHING*/ }
-            else if(directoryMatcher.matches()) cwd.add(new Directory(cwd, directoryMatcher.group(1)));
+            if (line.equals("$ cd /")) cwd = root;
+            else if (line.equals("$ ls")) { /* DO NOTHING*/ } else if (directoryMatcher.matches())
+                cwd.add(new Directory(cwd, directoryMatcher.group(1)));
             else if (fileMatcher.matches()) cwd.add(new File(fileMatcher.group(1)));
             else if (line.equals("$ cd ..")) cwd = cwd.parent();
             else if (line.startsWith("$ cd ")) cwd = cwd.get(line.substring(5));

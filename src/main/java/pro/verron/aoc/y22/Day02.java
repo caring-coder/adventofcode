@@ -1,26 +1,24 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.y22.Day02.Play.*;
 import static pro.verron.aoc.y22.Day02.State.*;
 
-public record Day02(List<Strategy> strategies) {
+public class Day02 {
+    private static Game XYZAreMoves(Strategy strategy) {
+        Function<Character, Play> elfMoveParser = parsePlay('A', 'B', 'C');
+        Function<Character, Play> yourMoveParser = parsePlay('X', 'Y', 'Z');
+        return new Game(elfMoveParser.apply(strategy.elfToken()), yourMoveParser.apply(strategy.myToken()));
+    }
 
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 2);
-        Day02 sample = new Day02(aoc.testStream().map(Day02::parseStrategy).toList());
-        Day02 custom = new Day02(aoc.trueStream().map(Day02::parseStrategy).toList());
-        assertEquals(sample.rockPaperScissors(Day02::XYZareMoves), 15);
-        assertEquals(custom.rockPaperScissors(Day02::XYZareMoves), 10404);
-        assertEquals(sample.rockPaperScissors(Day02::XYZareIntents), 12);
-        assertEquals(custom.rockPaperScissors(Day02::XYZareIntents), 10334);
+    private static Game XYZAreIntents(Strategy strategy) {
+        Function<Character, Play> elfMoveParser = parsePlay('A', 'B', 'C');
+        Function<Character, State> intentParser = parseIntent('X', 'Y', 'Z');
+        return new Game(elfMoveParser.apply(strategy.elfToken()), intentParser.apply(strategy.myToken()));
     }
 
     static Strategy parseStrategy(String line) {
@@ -33,16 +31,16 @@ public record Day02(List<Strategy> strategies) {
 
     record Strategy(Character elfToken, Character myToken){ }
 
-    private static Game XYZareMoves(Strategy strategy) {
-        Function<Character, Play> elfMoveParser = parsePlay('A', 'B', 'C');
-        Function<Character, Play> yourMoveParser = parsePlay('X', 'Y', 'Z');
-        return new Game(elfMoveParser.apply(strategy.elfToken()), yourMoveParser.apply(strategy.myToken()));
+    public String ex1(Stream<String> content) {
+        List<Strategy> strategies = content.map(Day02::parseStrategy).toList();
+        int i = rockPaperScissors(strategies, Day02::XYZAreMoves);
+        return String.valueOf(i);
     }
 
-    private static Game XYZareIntents(Strategy strategy) {
-        Function<Character, Play> elfMoveParser = parsePlay('A', 'B', 'C');
-        Function<Character, State> intentParser = parseIntent('X', 'Y', 'Z');
-        return new Game(elfMoveParser.apply(strategy.elfToken()), intentParser.apply(strategy.myToken()));
+    public String ex2(Stream<String> content) {
+        List<Strategy> strategies = content.map(Day02::parseStrategy).toList();
+        int i = rockPaperScissors(strategies, Day02::XYZAreIntents);
+        return String.valueOf(i);
     }
 
     private static Function<Character, Play> parsePlay(Character rock, Character paper, Character scissor) {
@@ -63,8 +61,8 @@ public record Day02(List<Strategy> strategies) {
         };
     }
 
-    private int rockPaperScissors(Function<Strategy, Game> player) {
-        return this.strategies.stream().map(player).mapToInt(Game::value).sum();
+    private int rockPaperScissors(List<Strategy> strategies, Function<Strategy, Game> player) {
+        return strategies.stream().map(player).mapToInt(Game::value).sum();
     }
 
     public enum Play {ROCK, PAPER, SCISSOR}

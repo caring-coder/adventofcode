@@ -1,26 +1,23 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
 import pro.verron.aoc.utils.board.Board;
 import pro.verron.aoc.utils.board.ScoreComputer;
 import pro.verron.aoc.utils.board.Square;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.utils.board.Direction.*;
 
 public class Day08 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 8);
-        assertEquals(treetopTreeHouse(aoc.testList(), Day08::nbVisibleTrees), 21L);
-        assertEquals(treetopTreeHouse(aoc.trueList(), Day08::nbVisibleTrees), 1679L);
-        assertEquals(treetopTreeHouse(aoc.testList(), Day08::scenicScore), 8L);
-        assertEquals(treetopTreeHouse(aoc.trueList(), Day08::scenicScore), 536625L);
+    public String ex1(List<String> content) {
+        return String.valueOf(treetopTreeHouse(content, Day08::nbVisibleTrees));
+    }
+
+    public String ex2(List<String> content) {
+        return String.valueOf(treetopTreeHouse(content, Day08::scenicScore));
     }
 
     private static long treetopTreeHouse(List<String> input, ScoreComputer<Integer> scorer) {

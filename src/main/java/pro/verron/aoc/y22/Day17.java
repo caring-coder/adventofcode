@@ -1,10 +1,8 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-import pro.verron.aoc.utils.board.Vector;
 import pro.verron.aoc.utils.board.Direction;
+import pro.verron.aoc.utils.board.Vector;
 
-import java.io.IOException;
 import java.util.*;
 
 import static java.lang.Math.max;
@@ -13,29 +11,10 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.LongStream.rangeClosed;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.utils.board.Direction.DOWN;
 import static pro.verron.aoc.utils.board.Direction.UP;
 
 public class Day17 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode adventOfCode = new AdventOfCode(22, 17);
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.testString()), 2022L), 3068, "Sample Part 1");
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.trueString()), 2022L), 3114, "Exercice Part 1");
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.testString()), 1000000000000L), 1514285714288L, "Sample Part 2");
-        assertEquals(simulateRockFalls(parseDirections(adventOfCode.trueString()), 1000000000000L), 1540804597682L, "Exercice Part 2");
-    }
-    static final List<Shape> SHAPES = List.of(
-            new Shape(List.of("####"), 1, 4, new Vector(3, 2)),
-            new Shape(List.of(" # ", "###", " # "), 3, 3, new Vector(3, 2)),
-            new Shape(List.of("###", "  #", "  #"), 3, 3, new Vector(3, 2)),
-            new Shape(List.of("#", "#", "#", "#"), 4, 1, new Vector(3, 2)),
-            new Shape(List.of("##", "##"), 2, 2, new Vector(3, 2)));
-    static LinkedList<Direction> parseDirections(String input) {
-        return stream(input.split(""))
-                .map(character -> character.equals("<") ? Direction.LEFT : Direction.RIGHT)
-                .collect(toCollection(LinkedList::new));
-    }
     static long simulateRockFalls(Queue<Direction> jetDirections, long requestedFallen) {
         var cave = new Cave(7, emptyList());
         var directions = new LinkedList<>(jetDirections);
@@ -66,10 +45,10 @@ public class Day17 {
                 if(heights.size() >= 3) {
                     int ultimate = heights.lastKey();
                     int penultimate = heights.headMap(ultimate).lastKey();
-                    int antepenultimate = heights.headMap(penultimate).lastKey();
+                    int antePenultimate = heights.headMap(penultimate).lastKey();
 
                     int deltaHeight = ultimate - penultimate;
-                    int penultimateDelta = penultimate - antepenultimate;
+                    int penultimateDelta = penultimate - antePenultimate;
                     if(deltaHeight == penultimateDelta) {
                         long deltaFallen = heights.get(ultimate) - heights.get(penultimate);
                         long times = (requestedFallen - nbShapesFallen) / deltaFallen;
@@ -81,6 +60,25 @@ public class Day17 {
             }
         } while (nbShapesFallen < requestedFallen);
         return cave.stackHeight() + skipped;
+    }
+
+    public String ex1(String content) {
+        return String.valueOf(simulateRockFalls(parseDirections(content), 2022L));
+    }
+    static final List<Shape> SHAPES = List.of(
+            new Shape(List.of("####"), 1, 4, new Vector(3, 2)),
+            new Shape(List.of(" # ", "###", " # "), 3, 3, new Vector(3, 2)),
+            new Shape(List.of("###", "  #", "  #"), 3, 3, new Vector(3, 2)),
+            new Shape(List.of("#", "#", "#", "#"), 4, 1, new Vector(3, 2)),
+            new Shape(List.of("##", "##"), 2, 2, new Vector(3, 2)));
+    static LinkedList<Direction> parseDirections(String input) {
+        return stream(input.split(""))
+                .map(character -> character.equals("<") ? Direction.LEFT : Direction.RIGHT)
+                .collect(toCollection(LinkedList::new));
+    }
+
+    public String ex2(String content) {
+        return String.valueOf(simulateRockFalls(parseDirections(content), 1000000000000L));
     }
     record Shape(List<String> s, int height, int width, Vector vector) {
         public long bottom() {

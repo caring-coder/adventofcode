@@ -1,24 +1,19 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-
-import java.io.IOException;
 import java.util.*;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.asLifoQueue;
 import static java.util.stream.Collectors.joining;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day05 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 5);
-        assertEquals(supplyStacks(aoc.testString(), Move::apply9000), "CMZ", "Sample Part 1");
-        assertEquals(supplyStacks(aoc.trueString(), Move::apply9000), "QMBMJDFTD", "Exercice Part 1");
-        assertEquals(supplyStacks(aoc.testString(), Move::apply9001), "MCD", "Sample Part 2");
-        assertEquals(supplyStacks(aoc.trueString(), Move::apply9001), "NBTVTJNFJ", "Exercice Part 2");
+    public String ex1(String content) {
+        return String.valueOf(supplyStacks(content, Move::apply9000));
     }
 
+    public String ex2(String content) {
+        return String.valueOf(supplyStacks(content, Move::apply9001));
+    }
     interface CrateMover {
         void apply(Move move, List<Queue<Character>> crateStacks);
     }
@@ -55,7 +50,7 @@ public class Day05 {
         return stacks;
     }
 
-    private record Move(int nb, int from, int to) {
+    record Move(int nb, int from, int to) {
         public Move(String nb, String from, String to) {
             this(parseInt(nb), parseInt(from), parseInt(to));
         }

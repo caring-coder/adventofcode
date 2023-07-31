@@ -1,20 +1,30 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
 import pro.verron.aoc.utils.board.Board;
 import pro.verron.aoc.utils.board.Square;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
-
-public record Day12(Board<Character> board, Square<Character> start, Square<Character> end) {
-    public Day12(Board<Character> board, char startChar, char endChar) {
-        this(board, board.find(startChar), board.find(endChar));
+public class Day12 {
+    public String ex1(List<String> content) {
+        Board<Character> board = parseBoard(content);
+        Square<Character> start = board.find('S');
+        Square<Character> end = board.find('E');
         start.set('a');
         end.set('z');
+        long l = hillClimbingAlgorithm(board, start, end);
+        return String.valueOf(l);
+    }
+
+    public String ex2(List<String> content) {
+        Board<Character> board = parseBoard(content);
+        Square<Character> start = board.find('S');
+        Square<Character> end = board.find('E');
+        start.set('a');
+        end.set('z');
+        long l = hillClimbingAlgorithm(board, start, board.findAll('a'));
+        return String.valueOf(l);
     }
 
     private static Board<Character> parseBoard(List<String> input) {
@@ -24,20 +34,11 @@ public record Day12(Board<Character> board, Square<Character> start, Square<Char
         return new Board<>(height, length, i -> (char) heights[i], (i, v)-> heights[i] = v);
     }
 
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 12);
-        Day12 sample = new Day12(parseBoard(aoc.testList()), 'S', 'E');
-        Day12 custom = new Day12(parseBoard(aoc.trueList()), 'S', 'E');
-        assertEquals(sample.hillClimbingAlgorithm(sample.end, sample.start), 31);
-        assertEquals(custom.hillClimbingAlgorithm(custom.end, custom.start), 437);
-        assertEquals(sample.hillClimbingAlgorithm(sample.end, sample.board.findAll('a')), 29);
-        assertEquals(custom.hillClimbingAlgorithm(custom.end, custom.board.findAll('a')), 430);
-    }
-
-    private long hillClimbingAlgorithm(Square<Character> from, Set<Square<Character>> to) {
+    private long hillClimbingAlgorithm(Board<Character> board, Square<Character> from, Set<Square<Character>> to) {
         return shortestDistance(from, to, board.height() * board.width());
     }
-    private long hillClimbingAlgorithm(Square<Character> from, Square<Character> to) {
+
+    private long hillClimbingAlgorithm(Board<Character> board, Square<Character> from, Square<Character> to) {
         return shortestDistance(from, Set.of(to), board.height() * board.width());
     }
 

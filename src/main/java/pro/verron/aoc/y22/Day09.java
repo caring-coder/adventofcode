@@ -1,10 +1,8 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
 import pro.verron.aoc.utils.board.Direction;
 import pro.verron.aoc.utils.board.Vector;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -15,16 +13,15 @@ import java.util.stream.Stream;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.IntStream.range;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 import static pro.verron.aoc.utils.assertions.Assertions.assertThat;
 
 public class Day09 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 9);
-        assertEquals(new Day09().ropeBridge(aoc.testStream(), 2),13);
-        assertEquals(new Day09().ropeBridge(aoc.trueStream(), 2),6098);
-        assertEquals(new Day09().ropeBridge(aoc.testStream(2), 10),36);
-        assertEquals(new Day09().ropeBridge(aoc.trueStream(), 10),2597);
+    public String ex1(Stream<String> content) {
+        return String.valueOf(ropeBridge(content, 2));
+    }
+
+    public String ex2(Stream<String> content) {
+        return String.valueOf(ropeBridge(content, 10));
     }
 
     private int ropeBridge(Stream<String> input, int nbKnots) {

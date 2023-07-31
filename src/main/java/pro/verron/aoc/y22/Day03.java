@@ -1,8 +1,5 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.AdventOfCode;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,15 +7,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.util.stream.IntStream.range;
-import static pro.verron.aoc.utils.assertions.Assertions.assertEquals;
 
 public class Day03 {
-    public static void main(String[] args) throws IOException {
-        AdventOfCode aoc = new AdventOfCode(22, 3);
-        assertEquals(rucksackReorganization(aoc.testList(), Day03::extractPockets), 157, "Sample Part 1");
-        assertEquals(rucksackReorganization(aoc.trueList(), Day03::extractPockets), 7742, "Exercice Part 1");
-        assertEquals(rucksackReorganization(aoc.testList(), Day03::extractTeam), 70, "Sample Part 2");
-        assertEquals(rucksackReorganization(aoc.trueList(), Day03::extractTeam), 2276, "Exercice Part 2");
+    public String ex1(List<String> content) {
+        return String.valueOf(rucksackReorganization(content, Day03::extractPockets));
+    }
+
+    public String ex2(List<String> content) {
+        return String.valueOf(rucksackReorganization(content, Day03::extractPockets));
     }
 
     @FunctionalInterface
