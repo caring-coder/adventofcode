@@ -3,14 +3,16 @@ package pro.verron.aoc.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Stream.concat;
 import static pro.verron.aoc.utils.board.ThrowingFunction.sneaky;
@@ -27,11 +29,11 @@ public record AdventOfCode(Path root) {
             Method entrypoint,
             int idxExercise
     ) {
-        Object in = extractInput.apply(test.in());
-        String out = readString(test.out());
-        String actual = invoke(dayInstance, entrypoint, in);
-        String expected = out.split("-----")[idxExercise].trim();
-        boolean success = expected.equals(actual);
+        var in = extractInput.apply(test.in());
+        var out = readString(test.out());
+        var actual = invoke(dayInstance, entrypoint, in);
+        var expected = out.split("-----")[idxExercise].trim();
+        var success = expected.equals(actual);
         return new TestResult(test, success, actual, expected);
     }
 
@@ -52,53 +54,51 @@ public record AdventOfCode(Path root) {
     }
 
     private static Method findExerciseMethod(Class<?> dayClass, String nameExercise) {
-        return Arrays.stream(dayClass.getMethods())
+        var supportedInjections = List.of(String.class, List.class, Stream.class);
+        return stream(dayClass.getMethods())
                 .filter(method -> method.getName().equals(nameExercise))
                 .findFirst()
                 .filter(method -> method.getParameterCount() == 1)
-                .filter(method -> List.of(String.class, List.class, Stream.class).contains(method.getParameterTypes()[0]))
+                .filter(method -> supportedInjections.contains(method.getParameterTypes()[0]))
                 .orElseThrow(() -> {
-                    String template = "Could not find an method named %s in %s," +
+                    var template = "Could not find an method named %s in %s," +
                             " with only one parameter of type String, List<String> or Stream<String>";
-                    String message = template.formatted(nameExercise, dayClass);
+                    var message = template.formatted(nameExercise, dayClass);
                     return new RuntimeException(new NoSuchMethodException(message));
                 });
     }
 
     private static Path findOutPath(Path p) {
-        String inFilename = p.getFileName().toString();
-        String outFilename = inFilename.replace(".in", ".out");
+        var inFilename = p.getFileName().toString();
+        var outFilename = inFilename.replace(".in", ".out");
         return p.resolveSibling(outFilename);
     }
 
-    private Path inputPath(String input, int i) {
-        String extensionDetail = i == 0 ? "" : "-%d".formatted(i);
-        String filename = ("%s%s.txt").formatted(input, extensionDetail);
-        return root.resolve(filename);
-    }
-
-    private Stream<String> stream(String input, int i, String delimiter) {
-        try {
-            return new Scanner(inputPath(input, i)).useDelimiter(delimiter).tokens();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private static Stream<String> load(Path path, String delimiter) throws IOException {
+        return new Scanner(path, StandardCharsets.UTF_8)
+                .useDelimiter(delimiter)
+                .tokens()
+                .peek(System.out::println);
     }
 
     public List<TestResult> test(Object dayInstance, int noExercise) throws InvocationTargetException, IllegalAccessException, IOException {
-        String nameExercise = "ex" + noExercise;
-        int idxExercise = noExercise - 1;
+        var nameExercise = "ex" + noExercise;
+        var idxExercise = noExercise - 1;
 
-        Class<?> dayClass = dayInstance.getClass();
+        var dayClass = dayInstance.getClass();
         var entrypoint = findExerciseMethod(dayClass, nameExercise);
+        var delimiter = Optional
+                .ofNullable(entrypoint.getAnnotation(AdventOfCodeDelimiter.class))
+                .map(AdventOfCodeDelimiter::value)
+                .orElse("\n");
 
-        Class<?> parameterType = entrypoint.getParameterTypes()[0];
+        var parameterType = entrypoint.getParameterTypes()[0];
         if (parameterType.equals(String.class))
             return getTestResult(dayInstance, idxExercise, entrypoint, sneaky(Files::readString));
         else if (parameterType.equals(List.class))
-            return getTestResult(dayInstance, idxExercise, entrypoint, sneaky(Files::readAllLines));
+            return getTestResult(dayInstance, idxExercise, entrypoint, sneaky(path -> load(path, delimiter).toList()));
         else if (parameterType.equals(Stream.class))
-            return getTestResult(dayInstance, idxExercise, entrypoint, sneaky(Files::lines));
+            return getTestResult(dayInstance, idxExercise, entrypoint, sneaky(path -> load(path, delimiter)));
         else
             throw new IllegalStateException("Unexpected value: " + parameterType);
     }

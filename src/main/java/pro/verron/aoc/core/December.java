@@ -72,10 +72,11 @@ public class December {
 
     private void testExercise(AdventOfCode adventOfCode, Object dayInstance, int noExercise) throws InvocationTargetException, IllegalAccessException, IOException {
         var tests = adventOfCode.test(dayInstance, noExercise);
-        long nbSucc = tests.stream().filter(TestResult::success).count();
-        long nbTest = tests.stream().count();
-        boolean validated = tests.stream().allMatch(TestResult::success);
-        writer.printf("%d> %-6s %s ", noExercise, "%d/%d".formatted(nbSucc, nbTest),
+        var nbSuccess = tests.stream().filter(TestResult::success).count();
+        var nbTests = tests.size();
+        var validated = tests.stream().allMatch(TestResult::success);
+        writer.printf("%d> %-6s %s ",
+                noExercise, "%d/%d".formatted(nbSuccess, nbTests),
                 validated ? "☑" : "☐");
         if (!validated) {
             writer.println();
