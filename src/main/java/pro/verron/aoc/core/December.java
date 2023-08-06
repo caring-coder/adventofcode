@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 public class December {
     private final int year;
     private final PrintStream writer;
-
     public December(int year, PrintStream writer) {
         this.year = year;
         this.writer = writer;
@@ -22,7 +21,7 @@ public class December {
             String entryDay = entryDayTemplate.formatted(day);
             String entryYear = entryYearTemplate.formatted(year);
             String entryClass = entryClassTemplate.formatted(entryYear, entryDay);
-            writer.printf("  %s: ", entryDay);
+
             AdventOfCode adventOfCode;
             Object dayInstance;
             try {
@@ -36,12 +35,9 @@ public class December {
                      IllegalAccessException |
                      InstantiationException |
                      RuntimeException e) {
-                writer.printf("%s -> %s", e.getClass(), e.getMessage());
-                writer.println();
-                writer.flush();
                 continue;
             }
-
+            writer.printf("  %s: ", entryDay);
             try {
                 testExercise(adventOfCode, dayInstance, 1);
             } catch (InvocationTargetException

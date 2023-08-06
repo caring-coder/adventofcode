@@ -11,7 +11,6 @@ public class Main {
             writer.printf("Year 20%02d:%n", i);
             December december = new December(i, writer);
             december.run();
-            writer.println();
             writer.flush();
         }
     }
