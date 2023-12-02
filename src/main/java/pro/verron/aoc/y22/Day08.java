@@ -1,7 +1,7 @@
 package pro.verron.aoc.y22;
 
 import pro.verron.aoc.utils.board.Board;
-import pro.verron.aoc.utils.board.ScoreComputer;
+import pro.verron.aoc.utils.board.Scorer;
 import pro.verron.aoc.utils.board.Square;
 
 import java.util.List;
@@ -20,12 +20,15 @@ public class Day08 {
         return String.valueOf(treetopTreeHouse(content, Day08::scenicScore));
     }
 
-    private static long treetopTreeHouse(List<String> input, ScoreComputer<Integer> scorer) {
+    private static long treetopTreeHouse(
+            List<String> input,
+            Scorer<Integer> scorer
+    ) {
         int[] treeSizes = input.stream().flatMapToInt(String::chars).map(Character::getNumericValue).toArray();
         int height = input.size();
         int length = input.get(0).length();
         Board<Integer> board = new Board<>(height, length, i -> treeSizes[i]);
-        return scorer.computeScore(board);
+        return scorer.score(board);
     }
 
     private static long nbVisibleTrees(Board<Integer> board) {

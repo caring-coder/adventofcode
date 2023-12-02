@@ -14,7 +14,8 @@ public class Day03 {
     }
 
     public String ex2(List<String> content) {
-        return String.valueOf(rucksackReorganization(content, Day03::extractPockets));
+        return String.valueOf(rucksackReorganization(content,
+                                                     Day03::extractTeam));
     }
 
     @FunctionalInterface

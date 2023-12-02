@@ -1,6 +1,6 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.core.AdventOfCodeDelimiter;
+import pro.verron.aoc.core.Delimiter;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +12,7 @@ import static java.util.Comparator.comparing;
 
 public class Day01 {
 
-    @AdventOfCodeDelimiter("\n\n")
+    @Delimiter("\n\n")
     public String ex1(Stream<String> content) {
         List<Bag> bags = content.map(Day01::parseBag).toList();
         int nbElfs = 1;
@@ -23,7 +23,7 @@ public class Day01 {
                 .toString();
     }
 
-    @AdventOfCodeDelimiter("\n\n")
+    @Delimiter("\n\n")
     public String ex2(Stream<String> content) {
         List<Bag> bags = content.map(Day01::parseBag).toList();
         int nbElfs = 3;

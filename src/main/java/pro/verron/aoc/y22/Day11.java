@@ -1,6 +1,6 @@
 package pro.verron.aoc.y22;
 
-import pro.verron.aoc.core.AdventOfCodeDelimiter;
+import pro.verron.aoc.core.Delimiter;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,12 +19,12 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 
 public class Day11 {
-    @AdventOfCodeDelimiter("\n\n")
+    @Delimiter("\n\n")
     public String ex1(Stream<String> content) {
         return String.valueOf(monkeyInTheMiddle(content, 20, 3));
     }
 
-    @AdventOfCodeDelimiter("\n\n")
+    @Delimiter("\n\n")
     public String ex2(Stream<String> content) {
         return String.valueOf(monkeyInTheMiddle(content, 10_000, 1));
     }

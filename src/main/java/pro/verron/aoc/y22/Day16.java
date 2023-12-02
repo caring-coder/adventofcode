@@ -14,6 +14,44 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 public class Day16 {
+    public String ex1(Stream<String> content) {
+        Pattern pattern = Pattern.compile(
+                "Valve (\\w+) has flow rate=(\\d+); tunnels? leads? to valves? (\\w+(, \\w+)*)");
+        List<Valve> valves = content
+                .map(pattern::matcher)
+                .filter(Matcher::matches)
+                .map(s -> new Valve(s.group(1),
+                                    parseInt(s.group(2)),
+                                    Arrays.asList(s.group(3)
+                                                          .split(", "))))
+                .toList();
+        Map<String, Valve> valuableValves = valves.stream()
+                .filter(valve -> valve.rate() > 0 || valve.id()
+                        .equals("AA"))
+                .collect(toMap(Valve::id, v -> v));
+        Map<Route, Integer> costs = calculateCosts(valves);
+        return String.valueOf(exo1(valuableValves, costs));
+    }
+
+    public String ex2(Stream<String> content) {
+        Pattern pattern = Pattern.compile(
+                "Valve (\\w+) has flow rate=(\\d+); tunnels? leads? to valves? (\\w+(, \\w+)*)");
+        List<Valve> valves = content
+                .map(pattern::matcher)
+                .filter(Matcher::matches)
+                .map(s -> new Valve(s.group(1),
+                                    parseInt(s.group(2)),
+                                    Arrays.asList(s.group(3)
+                                                          .split(", "))))
+                .toList();
+        Map<String, Valve> valuableValves = valves.stream()
+                .filter(valve -> valve.rate() > 0 || valve.id()
+                        .equals("AA"))
+                .collect(toMap(Valve::id, v -> v));
+        Map<Route, Integer> costs = calculateCosts(valves);
+        return String.valueOf(exo2(valuableValves, costs));
+    }
+
     private static Object exo1(Map<String, Valve> valuableValves1, Map<Route, Integer> costs1) {
         State initialState = new State(30, "AA", 0, new HashSet<>());
         return maximumPressureRelease(initialState, costs1, valuableValves1).currentPressure;
@@ -53,17 +91,6 @@ public class Day16 {
         return max;
     }
 
-    public String ex1(Stream<String> content) {
-        Pattern pattern = Pattern.compile("Valve (\\w+) has flow rate=(\\d+); tunnels? leads? to valves? (\\w+(, \\w+)*)");
-        List<Valve> valves = content
-                .map(pattern::matcher)
-                .filter(Matcher::matches)
-                .map(s -> new Valve(s.group(1), parseInt(s.group(2)), Arrays.asList(s.group(3).split(", "))))
-                .toList();
-        Map<String, Valve> valuableValves = valves.stream().filter(valve -> valve.rate() > 0 || valve.id().equals("AA")).collect(toMap(Valve::id, v -> v));
-        Map<Route, Integer> costs = calculateCosts(valves);
-        return String.valueOf(exo1(valuableValves, costs));
-    }
 
     private static Map<Route, Integer> calculateCosts(List<Valve> valves) {
         Map<Route, Integer> costs = new HashMap<>();
@@ -84,17 +111,7 @@ public class Day16 {
         return costs;
     }
 
-    public String ex2(Stream<String> content) {
-        Pattern pattern = Pattern.compile("Valve (\\w+) has flow rate=(\\d+); tunnels? leads? to valves? (\\w+(, \\w+)*)");
-        List<Valve> valves = content
-                .map(pattern::matcher)
-                .filter(Matcher::matches)
-                .map(s -> new Valve(s.group(1), parseInt(s.group(2)), Arrays.asList(s.group(3).split(", "))))
-                .toList();
-        Map<String, Valve> valuableValves = valves.stream().filter(valve -> valve.rate() > 0 || valve.id().equals("AA")).collect(toMap(Valve::id, v -> v));
-        Map<Route, Integer> costs = calculateCosts(valves);
-        return String.valueOf(exo2(valuableValves, costs));
-    }
+
     public record Route(String from, String to) {    }
     public record Valve(String id, int rate, List<String> tunnels) {    }
 

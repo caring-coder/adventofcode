@@ -13,6 +13,10 @@ public record Board<T>(int height, int width, Getter<T> getter, Setter<T> setter
         this(height, width, getter, null);
     }
 
+    public int size() {
+        return height() * width();
+    }
+
     public Set<Square<T>> findAll(T v) {
         return squares().filter(s->s.value().equals(v)).collect(Collectors.toSet());
     }
@@ -30,7 +34,11 @@ public record Board<T>(int height, int width, Getter<T> getter, Setter<T> setter
                 .mapToObj(this::square);
     }
 
-    public Optional<Square<T>> next(int index, Direction direction) {
+    public Optional<Square<T>> next(Square<T> square, Direction direction) {
+        return next(square.index(), direction);
+    }
+
+    private Optional<Square<T>> next(int index, Direction direction) {
         int height = index / width;
         int right = index % width;
         height += direction.height();

@@ -1,43 +1,35 @@
 package pro.verron.aoc.y15;
 
+import pro.verron.aoc.utils.Move;
+import pro.verron.aoc.utils.Moves;
+import pro.verron.aoc.utils.monad.Monad;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class Day01 {
+
     public String ex1(String content) {
-        var floor = new Floor(0);
-        for (char c : content.toCharArray()) {
-            floor = switch (c) {
-                case '(' -> floor.upper();
-                case ')' -> floor.lower();
-                default -> throw new IllegalStateException("Unexpected value: " + c);
-            };
-        }
-        return String.valueOf(floor.value());
+        return content.chars()
+                .mapToObj(Move.parser('(', ')'))
+                .reduce(Monad.monadOf(new Moves()),
+                        Monad.accumulate(Moves::add),
+                        Monad.combine(Moves::merge))
+                .map(Moves::floor)
+                .map(String::valueOf)
+                .get();
     }
 
     public String ex2(String content) {
-        var floor = new Floor(0);
-        char[] charArray = content.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
-            floor = switch (c) {
-                case '(' -> floor.upper();
-                case ')' -> floor.lower();
-                default -> throw new IllegalStateException("Unexpected value: " + c);
-            };
-            if (floor.value() == -1)
-                return String.valueOf(i + 1);
-        }
-        return "Never";
-    }
-
-    private record Floor(int value) {
-        public Floor upper() {
-            return new Floor(value + 1);
-        }
-
-        public Floor lower() {
-            return new Floor(value - 1);
-        }
+        AtomicReference<Moves> ref = new AtomicReference<>(new Moves());
+        return content.chars()
+                .mapToObj(Move.parser('(', ')'))
+                .map(move -> ref.updateAndGet(state -> state.add(move)))
+                .filter(state -> state.floor() == -1)
+                .findFirst()
+                .map(Moves::moves)
+                .map(List::size)
+                .map(String::valueOf)
+                .orElse("Never");
     }
 }
-
-

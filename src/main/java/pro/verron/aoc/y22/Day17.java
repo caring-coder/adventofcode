@@ -15,6 +15,17 @@ import static pro.verron.aoc.utils.board.Direction.DOWN;
 import static pro.verron.aoc.utils.board.Direction.UP;
 
 public class Day17 {
+
+    public String ex1(String content) {
+        return String.valueOf(simulateRockFalls(parseDirections(content),
+                                                2022L));
+    }
+
+    public String ex2(String content) {
+        return String.valueOf(simulateRockFalls(parseDirections(content),
+                                                1000000000000L));
+    }
+
     static long simulateRockFalls(Queue<Direction> jetDirections, long requestedFallen) {
         var cave = new Cave(7, emptyList());
         var directions = new LinkedList<>(jetDirections);
@@ -62,9 +73,7 @@ public class Day17 {
         return cave.stackHeight() + skipped;
     }
 
-    public String ex1(String content) {
-        return String.valueOf(simulateRockFalls(parseDirections(content), 2022L));
-    }
+
     static final List<Shape> SHAPES = List.of(
             new Shape(List.of("####"), 1, 4, new Vector(3, 2)),
             new Shape(List.of(" # ", "###", " # "), 3, 3, new Vector(3, 2)),
@@ -77,9 +86,7 @@ public class Day17 {
                 .collect(toCollection(LinkedList::new));
     }
 
-    public String ex2(String content) {
-        return String.valueOf(simulateRockFalls(parseDirections(content), 1000000000000L));
-    }
+
     record Shape(List<String> s, int height, int width, Vector vector) {
         public long bottom() {
             return vector().row();

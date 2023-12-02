@@ -1,50 +1,70 @@
 package pro.verron.aoc.y15;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
+
+import static java.util.Arrays.binarySearch;
+import static java.util.regex.Pattern.compile;
+import static java.util.stream.IntStream.range;
 
 public class Day05 {
+
+    private static Predicate<String> containsNCharsFrom(int n, String letters) {
+        return str -> containsNCharsFrom(n, letters, str);
+    }
+
+    private static boolean containsNCharsFrom(
+            int n,
+            String letters,
+            String str
+    ) {
+        var chars = letters.chars()
+                .sorted()
+                .toArray();
+        return str.chars()
+                .filter(letter -> binarySearch(chars, letter) > -1)
+                .skip(n - 1)
+                .findAny()
+                .isPresent();
+    }
+
     public String ex1(List<String> content) {
-        Predicate<String> threeVowels = str -> str.replaceAll("[^aeiou]", "").length() >= 3;
-        Predicate<String> duplicateCharacter = (str) -> Pattern.compile("(.)\\1").matcher(str).find();
-        Predicate<String> naughtySubstrings = Pattern.compile("(ab)|(cd)|(pq)|(xy)").asPredicate().negate();
+        Predicate<String> duplicateCharacter = (str) -> compile(
+                "(.)\\1").matcher(str)
+                .find();
+        Predicate<String> naughtySubstrings = compile(
+                "(ab)|(cd)|(pq)|(xy)")
+                .asPredicate()
+                .negate();
         return String.valueOf(content.stream()
-                .filter(threeVowels)
-                .filter(duplicateCharacter)
-                .filter(naughtySubstrings)
-                .count());
+                                      .filter(containsNCharsFrom(3, "aeiou"))
+                                      .filter(duplicateCharacter)
+                                      .filter(naughtySubstrings)
+                                      .count());
     }
 
     public String ex2(List<String> content) {
         Predicate<String> twoNonOverlappingPairs = this::twoNonOverlappingPairs;
-        Predicate<String> oneRepeatingWithGap = (str) -> Pattern.compile("(.).\\1").matcher(str).find();
+        Predicate<String> oneRepeatingWithGap = (str) -> compile(
+                "(.).\\1")
+                .matcher(str)
+                .find();
         return String.valueOf(content.stream()
-                .filter(twoNonOverlappingPairs)
-                .filter(oneRepeatingWithGap)
-                .count());
+                                      .filter(twoNonOverlappingPairs)
+                                      .filter(oneRepeatingWithGap)
+                                      .count());
     }
 
 
     private boolean twoNonOverlappingPairs(String s) {
-        record Pair(char o, char t) {
-        }
-        AtomicInteger overlapping = new AtomicInteger();
-        Set<Pair> pairs = new HashSet<>();
-        Optional<Pair> lastPair = Optional.empty();
-        for (int i = 0; i < s.toCharArray().length - 1; i++) {
-            Pair newPair = new Pair(s.toCharArray()[i], s.toCharArray()[i + 1]);
-            lastPair.filter(newPair::equals)
-                    .ifPresent(ignored -> overlapping.getAndIncrement());
-            lastPair = Optional.of(newPair);
-            pairs.add(newPair);
-            if (pairs.size() + overlapping.get() < i)
-                return true;
-        }
-        return false;
+        record Pair<T>(T x, T y) {}
+        return range(0, s.length() - 1).boxed()
+                .flatMap(i1 -> range(i1 + 2, s.length() - 1).mapToObj(
+                        i2 -> new Pair<>(i1, i2)))
+                .map(p -> new Pair<>(s.substring(p.x, p.x + 2),
+                                     s.substring(p.y, p.y + 2)))
+                .anyMatch(p -> Objects.equals(p.x, p.y));
+
     }
 }
