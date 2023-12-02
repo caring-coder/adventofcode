@@ -70,10 +70,11 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        iterate(2015, year -> year + 1)
+        iterate(2023, year -> year + 1)
                 .mapToObj(year -> YearMonth.of(year, DECEMBER))
                 .flatMap(Main::first25days)
-                .takeWhile(LocalDate.now()::isAfter)
+                .takeWhile(LocalDate.now()
+                                   .plusDays(1)::isAfter)
                 .map(date -> new Runner(date, INPUT_ROOT).run())
                 .forEachOrdered(Main::logsResults);
     }
@@ -122,14 +123,15 @@ public class Main {
             statuses.append(suite.statusMessage(statusTemplate));
             errors.addAll(suite.errorMessages(errorTemplate));
         }
-        Level level =
-                errors.isEmpty() && suites.duration()
-                                            .compareTo(Duration.of(
-                                                    (long) suites.testSuites()
-                                                            .size() * 2L
-                                                    , ChronoUnit.SECONDS)) < 0 ?
-                        Level.INFO :
-                        Level.ERROR;
+        Level level = errors.isEmpty()
+                      && suites.duration()
+                                 .compareTo(Duration.of(
+                                         (long) suites.testSuites()
+                                                 .size() * 2L
+                                         ,
+                                         ChronoUnit.SECONDS)) < 0 ?
+                Level.INFO :
+                Level.ERROR;
         log.atLevel(level)
                 .log(statuses.toString());
         errors.forEach(log::error);

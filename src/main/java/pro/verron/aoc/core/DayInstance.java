@@ -37,11 +37,9 @@ public class DayInstance {
     }
 
     public TestSuite test1(List<Test> inputs) {
-        List<TestResult> results = inputs.stream()
-                .map(test -> generateRunner("ex1").run1(0)
-                        .apply(test))
-                .toList();
-        return new TestSuite("ex1", results);
+        return new TestSuite("ex1", inputs.stream()
+                .map(generateRunner("ex1").run1(0))
+                .toList());
     }
 
     public TestSuite test2(List<Test> inputs) {
