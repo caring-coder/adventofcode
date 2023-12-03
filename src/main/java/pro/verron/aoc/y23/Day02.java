@@ -39,39 +39,25 @@ public class Day02 {
         public static Predicate<? super Game> isValid(
                 int red, int green, int blue
         ) {
-            return (game) -> game.maxRed() <= red
-                             && game.maxGreen() <= green
-                             && game.maxBlue() <= blue;
+            return (game) -> game.max("red") <= red
+                             && game.max("green") <= green
+                             && game.max("blue") <= blue;
         }
 
-        private int maxBlue() {
+        private int max(String key) {
             return draws.stream()
-                    .mapToInt(Draw::blue)
-                    .max()
-                    .orElse(0);
-        }
-
-        private int maxGreen() {
-            return draws.stream()
-                    .mapToInt(Draw::green)
-                    .max()
-                    .orElse(0);
-        }
-
-        private int maxRed() {
-            return draws.stream()
-                    .mapToInt(Draw::red)
+                    .mapToInt(draw -> draw.get(key))
                     .max()
                     .orElse(0);
         }
 
         public int power() {
-            return maxBlue() * maxGreen() * maxRed();
+            return max("blue") * max("green") * max("red");
         }
     }
 
 
-    private record Draw(int red, int green, int blue) {
+    private record Draw(Map<String, Integer> colors) {
         Draw(String string) {
             this(Stream.of(string.split(","))
                          .map(String::trim)
@@ -80,10 +66,8 @@ public class Day02 {
                                         strings -> Integer.parseInt(strings[0]))));
         }
 
-        Draw(Map<String, Integer> map) {
-            this(map.getOrDefault("red", 0),
-                 map.getOrDefault("green", 0),
-                 map.getOrDefault("blue", 0));
+        public int get(String key) {
+            return colors.getOrDefault(key, 0);
         }
     }
 }
