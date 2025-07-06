@@ -8,16 +8,7 @@ import java.util.function.Function;
 public class FailingTestRunner
         implements TestRunner {
     @Override
-    public @NotNull Function<Test, TestResult> run1(int exerciseIndex) {
-        return (test) -> new TestResult(test, false,
-                                        "No day instance " +
-                                        "found", "", Duration.ZERO);
-    }
-
-    @Override
-    public @NotNull Function<Test, TestResult> run2(int exerciseIndex) {
-        return (test) -> new TestResult(test, false,
-                                        "No day instance " +
-                                        "found", "", Duration.ZERO);
+    public @NotNull Function<Test, TestResult> run(int exerciseIndex) {
+        return test -> new TestResult(test, false, "No day instance found", "", Duration.ZERO);
     }
 }

@@ -14,6 +14,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,18 +64,65 @@ import static java.util.Comparator.comparing;
 public class Main {
 
     public static final Path INPUT_ROOT = Path.of("input");
+    public static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Logger log = LoggerFactory.getLogger(Main.class);
+    private static LocalDate startDate;
+    private static LocalDate endDate;
 
     public static void main(String[] args) {
-        var tomorrow = now().plusDays(1);
+        // Parse command-line arguments if provided
+        if (args.length == 0) {
+            startDate = LocalDate.of(2015, DECEMBER, 1);
+            endDate = now().plusDays(1);
+            log.info("No date arguments provided. Testing all dates from {} to {}", startDate, endDate.minusDays(1));
+        }
+        else if (args.length == 1) {
+            // If one date argument is provided, test only that date
+            startDate = LocalDate.parse(args[0], dateFormatter);
+            endDate = startDate;
+            log.info("Testing only date: {}", startDate);
+        }
+        else if (args.length == 2) {
+            // If two date arguments are provided, test the period between them
+            startDate = LocalDate.parse(args[0], dateFormatter);
+            endDate = LocalDate.parse(args[1], dateFormatter);
+            log.info("Testing date range: {} to {}", startDate, endDate);
+        }
+        else {
+            log.error("Too many arguments provided. Expected 0, 1, or 2 date arguments in format YYYY-MM-DD");
+            return;
+        }
 
-        var day = LocalDate.of(2015, DECEMBER, 1);
-        while (day.isBefore(tomorrow)) {
-            var runner = new Runner(day, INPUT_ROOT);
+        var date = startDate;
+        while (date.isBefore(endDate.plusDays(1))) {
+            var runner = new Runner(date, INPUT_ROOT);
             var testSuites = runner.run();
             logsResults(testSuites);
-            day = computeNext(day);
+            date = computeNext(date);
         }
+    }
+
+    public static void logsResults(TestSuites suites) {
+        var date = suites.date();
+        var prefix = "%04d dec %02d : ".formatted(date.getYear(), date.getDayOfMonth());
+        var statusTemplate = "%-4s %s %3d/%-3d %3ds%03dms ";
+        var errorTemplate = "expected %10s but was %-10s >>> %s";
+        var statuses = new StringBuilder(prefix);
+        var errors = new ArrayList<String>();
+        var testSuites = suites.testSuites();
+        for (TestSuite suite : testSuites) {
+            statuses.append(suite.statusMessage(statusTemplate));
+            errors.addAll(suite.errorMessages(errorTemplate));
+        }
+        var noErrors = errors.isEmpty();
+        var nbTestSuites = testSuites.size();
+        var testSuitesDuration = suites.duration();
+        var maxDuration = Duration.of(nbTestSuites * 2L, ChronoUnit.SECONDS);
+        var notTooLong = testSuitesDuration.compareTo(maxDuration) < 0;
+        Level level = noErrors && notTooLong ? Level.INFO : Level.ERROR;
+        log.atLevel(level)
+           .log(statuses.toString());
+        errors.forEach(log::error);
     }
 
     private static LocalDate computeNext(LocalDate day) {
@@ -97,36 +145,15 @@ public class Main {
         }
     }
 
-    private static boolean suffixedWith(Path p, String suffix) {
-        return p.getFileName()
-                .toString()
-                .endsWith(suffix);
-    }
-
     private static boolean prefixedBy(Path path, String prefix) {
         return path.getFileName()
                    .toString()
                    .startsWith(prefix);
     }
 
-    public static void logsResults(TestSuites suites) {
-        var date = suites.date();
-        var prefix = "%04d dec %02d : ".formatted(date.getYear(), date.getDayOfMonth());
-        var statusTemplate = "%-4s %s %3d/%-3d %3ds%03dms ";
-        var errorTemplate = "expected %10s but was %-10s >>> %s";
-        var statuses = new StringBuilder(prefix);
-        var errors = new ArrayList<String>();
-        for (TestSuite suite : suites.testSuites()) {
-            statuses.append(suite.statusMessage(statusTemplate));
-            errors.addAll(suite.errorMessages(errorTemplate));
-        }
-        Level level = errors.isEmpty() && suites.duration()
-                                                .compareTo(Duration.of(suites.testSuites()
-                                                                             .size() * 2L, ChronoUnit.SECONDS)) < 0
-                ? Level.INFO
-                : Level.ERROR;
-        log.atLevel(level)
-           .log(statuses.toString());
-        errors.forEach(log::error);
+    private static boolean suffixedWith(Path p, String suffix) {
+        return p.getFileName()
+                .toString()
+                .endsWith(suffix);
     }
 }
